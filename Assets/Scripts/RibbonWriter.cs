@@ -7,57 +7,72 @@ public class RibbonWriter : MonoBehaviour {
 
 	Mesh mesh;
 
-	void Start () {
+	Vector3[] vertices;
+	Vector2[] edgeUVs;
+	int[] indices;
 
-		float width = 1000;
-		float height = 1000;
+	void Start () {
 
 		MeshFilter mf = ribbon.GetComponent<MeshFilter>();
 		mesh = new Mesh();
 		mf.mesh = mesh;
 
-		Vector3[] vertices = new Vector3[4];
+		int n = 100;
 
-		vertices[0] = new Vector3(0, 0, 0);
-		vertices[1] = new Vector3(width, 0, 0);
-		vertices[2] = new Vector3(0, height, 0);
-		vertices[3] = new Vector3(width, height, 0);
+		vertices = new Vector3[3 * (1 + n)];
+		edgeUVs = new Vector2[3 * (1 + n)];
+		indices = new int[3 * 4 * n];
+
+		int vertStride = 3;
+		int indexStride = 3 * 4;
+
+		Vector3 EDGE_VEC = new Vector3(10, 0, 0);
+
+		Vector3 pos = new Vector3();
+
+		for (int i = 0; i < (1 + n); i++) {
+
+			transform.Translate(0, 0, 20);
+			transform.Rotate(new Vector3(10, 0, 0));
+
+			// TODO: Move to a function. Call once at Start, and once every Update. i++
+			vertices[i * vertStride + 1] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos           ));
+			vertices[i * vertStride + 0] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos + EDGE_VEC));
+			vertices[i * vertStride + 2] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos - EDGE_VEC));
+
+			// Set and forget. Only two of these will change on every update– the front middle vertex, and the vertex behind it
+			edgeUVs[i * vertStride + 1].x = 1;
+			edgeUVs[i * vertStride + 0].x = 2;
+			edgeUVs[i * vertStride + 2].x = 2;
+
+			// Set and forget. Only two of these will change on every update– the front triangle, and the triangles behind it
+
+			if (i > 0) {
+				indices[(i - 1) * indexStride + 0] = (i - 1) * vertStride + 0;
+				indices[(i - 1) * indexStride + 1] = (i + 0) * vertStride + 1;
+				indices[(i - 1) * indexStride + 2] = (i + 0) * vertStride + 0;
+
+				indices[(i - 1) * indexStride + 3] = (i - 1) * vertStride + 0;
+				indices[(i - 1) * indexStride + 4] = (i - 1) * vertStride + 1;
+				indices[(i - 1) * indexStride + 5] = (i + 0) * vertStride + 1;
+
+				indices[(i - 1) * indexStride + 6] = (i - 1) * vertStride + 1;
+				indices[(i - 1) * indexStride + 7] = (i - 1) * vertStride + 2;
+				indices[(i - 1) * indexStride + 8] = (i + 0) * vertStride + 1;
+
+				indices[(i - 1) * indexStride +  9] = (i - 1) * vertStride + 2;
+				indices[(i - 1) * indexStride + 10] = (i + 0) * vertStride + 2;
+				indices[(i - 1) * indexStride + 11] = (i + 0) * vertStride + 1;
+			}
+		}
 
 		mesh.vertices = vertices;
-
-		int[] tri = new int[6];
-
-		tri[0] = 0;
-		tri[1] = 2;
-		tri[2] = 1;
-
-		tri[3] = 2;
-		tri[4] = 3;
-		tri[5] = 1;
-
-		mesh.triangles = tri;
-
-		Vector3[] normals = new Vector3[4];
-
-		normals[0] = -Vector3.forward;
-		normals[1] = -Vector3.forward;
-		normals[2] = -Vector3.forward;
-		normals[3] = -Vector3.forward;
-
-		mesh.normals = normals;
-
-		Vector2[] uv = new Vector2[4];
-
-		uv[0] = new Vector2(0, 0);
-		uv[1] = new Vector2(1, 0);
-		uv[2] = new Vector2(0, 1);
-		uv[3] = new Vector2(1, 1);
-
-		mesh.uv = uv;
+		mesh.uv = edgeUVs;
+		mesh.triangles = indices;
 	}
 
 	void Update () {
-
+		/*
 		Vector3[] vertices = mesh.vertices;
 
 		for (int i = 0; i < mesh.vertexCount; i++) {
@@ -65,5 +80,6 @@ public class RibbonWriter : MonoBehaviour {
 		}
 
 		mesh.vertices = vertices;
+		*/
 	}
 }

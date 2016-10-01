@@ -3,83 +3,124 @@ using System.Collections;
 
 public class RibbonWriter : MonoBehaviour {
 
-	public GameObject ribbon;
+	public GameObject tail;
+	public GameObject head;
 
-	Mesh mesh;
+	Mesh headMesh;
+	Mesh tailMesh;
 
-	Vector3[] vertices;
-	Vector2[] edgeUVs;
-	int[] indices;
+	Vector3[] tailVertices;
+	Vector2[] tailEdgeUVs;
+	int[] tailIndices;
+
+	Vector3[] headVertices;
+	Vector2[] headEdgeUVs;
+	int[] headIndices;
+
+	int currentSegmentIndex;
+
+	Vector3 lastLeftPosition;
+	Vector3 lastRightPosition;
+
+	const int TOTAL_TAIL_SEGMENTS = 1000;
+	const int VERT_STRIDE = 3;
+	const int INDEX_STRIDE = 3 * 4;
+	const float MIN_DISTANCE = 3;
+	readonly Vector3 EDGE_VEC = new Vector3(10, 0, 0);
+	readonly Vector3 MIDDLE_VEC = new Vector3();
+
 
 	void Start () {
 
-		MeshFilter mf = ribbon.GetComponent<MeshFilter>();
-		mesh = new Mesh();
-		mf.mesh = mesh;
+		MeshFilter headMeshFilter = head.GetComponent<MeshFilter>();
+		headMesh = new Mesh();
+		headMeshFilter.mesh = headMesh;
 
-		int n = 100;
+		MeshFilter tailMeshFilter = tail.GetComponent<MeshFilter>();
+		tailMesh = new Mesh();
+		tailMeshFilter.mesh = tailMesh;
 
-		vertices = new Vector3[3 * (1 + n)];
-		edgeUVs = new Vector2[3 * (1 + n)];
-		indices = new int[3 * 4 * n];
+		tailVertices = new Vector3[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
+		tailEdgeUVs = new Vector2[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
+		tailIndices = new int[INDEX_STRIDE * TOTAL_TAIL_SEGMENTS];
 
-		int vertStride = 3;
-		int indexStride = 3 * 4;
+		int i;
 
-		Vector3 EDGE_VEC = new Vector3(10, 0, 0);
-
-		Vector3 pos = new Vector3();
-
-		for (int i = 0; i < (1 + n); i++) {
-
-			transform.Translate(0, 0, 20);
-			transform.Rotate(new Vector3(10, 0, 0));
-
-			// TODO: Move to a function. Call once at Start, and once every Update. i++
-			vertices[i * vertStride + 1] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos           ));
-			vertices[i * vertStride + 0] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos + EDGE_VEC));
-			vertices[i * vertStride + 2] = ribbon.transform.InverseTransformPoint(transform.TransformPoint(pos - EDGE_VEC));
-
-			// Set and forget. Only two of these will change on every update– the front middle vertex, and the vertex behind it
-			edgeUVs[i * vertStride + 1].x = 1;
-			edgeUVs[i * vertStride + 0].x = 2;
-			edgeUVs[i * vertStride + 2].x = 2;
-
-			// Set and forget. Only two of these will change on every update– the front triangle, and the triangles behind it
-
-			if (i > 0) {
-				indices[(i - 1) * indexStride + 0] = (i - 1) * vertStride + 0;
-				indices[(i - 1) * indexStride + 1] = (i + 0) * vertStride + 1;
-				indices[(i - 1) * indexStride + 2] = (i + 0) * vertStride + 0;
-
-				indices[(i - 1) * indexStride + 3] = (i - 1) * vertStride + 0;
-				indices[(i - 1) * indexStride + 4] = (i - 1) * vertStride + 1;
-				indices[(i - 1) * indexStride + 5] = (i + 0) * vertStride + 1;
-
-				indices[(i - 1) * indexStride + 6] = (i - 1) * vertStride + 1;
-				indices[(i - 1) * indexStride + 7] = (i - 1) * vertStride + 2;
-				indices[(i - 1) * indexStride + 8] = (i + 0) * vertStride + 1;
-
-				indices[(i - 1) * indexStride +  9] = (i - 1) * vertStride + 2;
-				indices[(i - 1) * indexStride + 10] = (i + 0) * vertStride + 2;
-				indices[(i - 1) * indexStride + 11] = (i + 0) * vertStride + 1;
-			}
+		for (i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
+			tailEdgeUVs[i * VERT_STRIDE + 0].x = 2;
+			tailEdgeUVs[i * VERT_STRIDE + 1].x = 1;
+			tailEdgeUVs[i * VERT_STRIDE + 2].x = 2;
+			PositionTailSegment(i);
+			FillTailSegment(i);
 		}
 
-		mesh.vertices = vertices;
-		mesh.uv = edgeUVs;
-		mesh.triangles = indices;
+		currentSegmentIndex = 0;
+
+		UpdateTailMesh();
+	}
+
+	int PreviousTailSegment(int index) {
+		return (TOTAL_TAIL_SEGMENTS + index - 1) % TOTAL_TAIL_SEGMENTS;
+	}
+
+	int NextTailSegment(int index) {
+		return (TOTAL_TAIL_SEGMENTS + index + 1) % TOTAL_TAIL_SEGMENTS;
 	}
 
 	void Update () {
-		/*
-		Vector3[] vertices = mesh.vertices;
+		Vector3  leftPosition = transform.TransformPoint( EDGE_VEC);
+		Vector3 rightPosition = transform.TransformPoint(-EDGE_VEC);
+		float distance = Vector3.Distance(leftPosition, lastLeftPosition) + Vector3.Distance(rightPosition, lastRightPosition);
 
-		for (int i = 0; i < mesh.vertexCount; i++) {
-			vertices[i].Set(Random.value * 1000, Random.value * 1000, Random.value * 1000);
+		if (distance > MIN_DISTANCE) {
+			lastLeftPosition  = leftPosition;
+			lastRightPosition = rightPosition;
+
+			currentSegmentIndex = NextTailSegment(currentSegmentIndex);
+			FillTailSegment(currentSegmentIndex);
+			ClearTailSegment(NextTailSegment(currentSegmentIndex));
 		}
 
-		mesh.vertices = vertices;
-		*/
+		PositionTailSegment(currentSegmentIndex);
+		UpdateTailMesh();
+	}
+
+	void PositionTailSegment(int index) {
+		tailVertices[index * VERT_STRIDE + 1] = tail.transform.InverseTransformPoint(transform.TransformPoint(MIDDLE_VEC));
+		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  EDGE_VEC));
+		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( -EDGE_VEC));
+	}
+
+	void FillTailSegment(int index) {
+		int lastIndex = PreviousTailSegment(index);
+		tailIndices[lastIndex * INDEX_STRIDE +  0] = lastIndex * VERT_STRIDE + 0;
+		tailIndices[lastIndex * INDEX_STRIDE +  1] = index     * VERT_STRIDE + 1;
+		tailIndices[lastIndex * INDEX_STRIDE +  2] = index     * VERT_STRIDE + 0;
+
+		tailIndices[lastIndex * INDEX_STRIDE +  3] = lastIndex * VERT_STRIDE + 0;
+		tailIndices[lastIndex * INDEX_STRIDE +  4] = lastIndex * VERT_STRIDE + 1;
+		tailIndices[lastIndex * INDEX_STRIDE +  5] = index     * VERT_STRIDE + 1;
+
+		tailIndices[lastIndex * INDEX_STRIDE +  6] = lastIndex * VERT_STRIDE + 1;
+		tailIndices[lastIndex * INDEX_STRIDE +  7] = lastIndex * VERT_STRIDE + 2;
+		tailIndices[lastIndex * INDEX_STRIDE +  8] = index     * VERT_STRIDE + 1;
+
+		tailIndices[lastIndex * INDEX_STRIDE +  9] = lastIndex * VERT_STRIDE + 2;
+		tailIndices[lastIndex * INDEX_STRIDE + 10] = index     * VERT_STRIDE + 2;
+		tailIndices[lastIndex * INDEX_STRIDE + 11] = index     * VERT_STRIDE + 1;
+	}
+
+	void ClearTailSegment(int index) {
+		int lastIndex = PreviousTailSegment(index);
+		for (int i = 0; i < INDEX_STRIDE; i++) {
+			tailIndices[lastIndex * INDEX_STRIDE + i] = lastIndex * VERT_STRIDE + 1;
+		}
+	}
+
+	void UpdateTailMesh() {
+		tailMesh.vertices = tailVertices;
+		tailMesh.uv = tailEdgeUVs;
+		tailMesh.triangles = tailIndices;
+		tailMesh.RecalculateBounds();
 	}
 }

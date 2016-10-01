@@ -11,6 +11,8 @@ public class InputHandler : MonoBehaviour {
 	// Update is called once per frame
 	void Update() {
 		float delta = Time.deltaTime;
+		float speed = Input.GetKey("space") ? 200 : 100;
+		transform.position += transform.forward * delta * speed;
 		UpdateNaiveControlScheme(delta);
 	}
 

@@ -17,16 +17,19 @@ public class RibbonWriter : MonoBehaviour {
 	Vector3 lastLeftPosition;
 	Vector3 lastRightPosition;
 
+	const float RIBBON_SCALE = 5f;
 	const int TOTAL_TAIL_SEGMENTS = 1000;
 	const int VERT_STRIDE = 3;
 	const int INDEX_STRIDE = 3 * 4;
 	const float MIN_DISTANCE = 3;
-	readonly Vector3 EDGE_VEC = new Vector3(10, 0, 0);
+	readonly Vector3 EDGE_VEC = new Vector3(RIBBON_SCALE, 0, 0);
 	readonly Vector3 MIDDLE_VEC = new Vector3();
 
 
 	void Start () {
-		
+
+		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
+
 		MeshFilter tailMeshFilter = tail.GetComponent<MeshFilter>();
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;

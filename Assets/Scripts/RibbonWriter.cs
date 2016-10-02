@@ -22,13 +22,15 @@ public class RibbonWriter : MonoBehaviour {
 	const int VERT_STRIDE = 3;
 	const int INDEX_STRIDE = 3 * 4;
 	const float MIN_DISTANCE = 3;
-	readonly Vector3 EDGE_VEC = new Vector3(RIBBON_SCALE, 0, 0);
-	readonly Vector3 MIDDLE_VEC = new Vector3();
+	readonly Vector3 LEFT_VEC = new Vector3(-RIBBON_SCALE, 0, -RIBBON_SCALE);
+	readonly Vector3 MIDDLE_VEC = new Vector3(0, 0, -RIBBON_SCALE);
+	readonly Vector3 RIGHT_VEC = new Vector3(RIBBON_SCALE, 0, -RIBBON_SCALE);
 
 
 	void Start () {
 
 		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
+		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
 
 		MeshFilter tailMeshFilter = tail.GetComponent<MeshFilter>();
 		tailMesh = new Mesh();
@@ -62,8 +64,8 @@ public class RibbonWriter : MonoBehaviour {
 	}
 
 	void Update () {
-		Vector3  leftPosition = transform.TransformPoint( EDGE_VEC);
-		Vector3 rightPosition = transform.TransformPoint(-EDGE_VEC);
+		Vector3  leftPosition = transform.TransformPoint(LEFT_VEC);
+		Vector3 rightPosition = transform.TransformPoint(RIGHT_VEC);
 		float distance = Vector3.Distance(leftPosition, lastLeftPosition) + Vector3.Distance(rightPosition, lastRightPosition);
 
 		if (distance > MIN_DISTANCE) {
@@ -81,8 +83,8 @@ public class RibbonWriter : MonoBehaviour {
 
 	void PositionTailSegment(int index) {
 		tailVertices[index * VERT_STRIDE + 1] = tail.transform.InverseTransformPoint(transform.TransformPoint(MIDDLE_VEC));
-		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  EDGE_VEC));
-		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( -EDGE_VEC));
+		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  LEFT_VEC));
+		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( RIGHT_VEC));
 	}
 
 	void FillTailSegment(int index) {

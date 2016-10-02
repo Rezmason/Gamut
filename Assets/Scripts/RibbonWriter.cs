@@ -6,16 +6,11 @@ public class RibbonWriter : MonoBehaviour {
 	public GameObject tail;
 	public GameObject head;
 
-	Mesh headMesh;
 	Mesh tailMesh;
 
 	Vector3[] tailVertices;
 	Vector2[] tailEdgeUVs;
 	int[] tailIndices;
-
-	Vector3[] headVertices;
-	Vector2[] headEdgeUVs;
-	int[] headIndices;
 
 	int currentSegmentIndex;
 
@@ -31,11 +26,7 @@ public class RibbonWriter : MonoBehaviour {
 
 
 	void Start () {
-
-		MeshFilter headMeshFilter = head.GetComponent<MeshFilter>();
-		headMesh = new Mesh();
-		headMeshFilter.mesh = headMesh;
-
+		
 		MeshFilter tailMeshFilter = tail.GetComponent<MeshFilter>();
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;

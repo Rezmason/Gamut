@@ -41,9 +41,9 @@ public class InputHandler : MonoBehaviour {
 		bool turnUp = Input.GetKey("up");
 		bool turnDown = Input.GetKey("down");
 		if (turnUp && !turnDown) {
-			transform.Rotate(new Vector3(-200 * delta, 0, 0));
+			transform.Rotate(new Vector3(-50 * delta, 0, 0));
 		} else if (turnDown && !turnUp) {
-			transform.Rotate(new Vector3( 200 * delta, 0, 0));
+			transform.Rotate(new Vector3(100 * delta, 0, 0));
 		}
 
 		// quasi-W/S axis

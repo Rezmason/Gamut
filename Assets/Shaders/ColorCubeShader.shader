@@ -36,7 +36,7 @@
 			VertexOutput vert (VertexInput input)
 			{
 				VertexOutput output;
-				output.worldPosition = mul(unity_ObjectToWorld, mul(_InvertedColorSpaceTransform, input.vertex)).xyz;
+				output.worldPosition = mul(_InvertedColorSpaceTransform, mul(unity_ObjectToWorld, input.vertex)).xyz;
 				output.edge = input.edge;
 				output.vertex = UnityObjectToClipPos(input.vertex);
 				return output;

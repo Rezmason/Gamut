@@ -7,15 +7,21 @@ public class RibbonWriter : MonoBehaviour {
 	public GameObject head;
 
 	Mesh tailMesh;
+	Mesh headMesh;
 
 	Vector3[] tailVertices;
 	Vector2[] tailEdgeUVs;
 	int[] tailIndices;
 
+	Vector2[] headEdgeUVs;
+
 	int currentSegmentIndex;
 
 	Vector3 lastLeftPosition;
 	Vector3 lastRightPosition;
+	Vector3 lastPosition;
+
+	float totalDistanceTraveled;
 
 	const float RIBBON_SCALE = 5f;
 	const int TOTAL_TAIL_SEGMENTS = 1000;
@@ -36,9 +42,12 @@ public class RibbonWriter : MonoBehaviour {
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;
 
+		headMesh = head.GetComponent<MeshFilter>().mesh;
+
 		tailVertices = new Vector3[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
 		tailEdgeUVs = new Vector2[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
 		tailIndices = new int[INDEX_STRIDE * TOTAL_TAIL_SEGMENTS];
+		headEdgeUVs = headMesh.uv;
 
 		int i;
 
@@ -46,11 +55,12 @@ public class RibbonWriter : MonoBehaviour {
 			tailEdgeUVs[i * VERT_STRIDE + 0].x = 2;
 			tailEdgeUVs[i * VERT_STRIDE + 1].x = 1;
 			tailEdgeUVs[i * VERT_STRIDE + 2].x = 2;
-			PositionTailSegment(i);
+			PositionTailSegment(i, 0);
 			FillTailSegment(i);
 		}
 
 		currentSegmentIndex = 0;
+		totalDistanceTraveled = 0;
 
 		UpdateTailMesh();
 	}
@@ -66,6 +76,7 @@ public class RibbonWriter : MonoBehaviour {
 	void Update () {
 		Vector3  leftPosition = transform.TransformPoint(LEFT_VEC);
 		Vector3 rightPosition = transform.TransformPoint(RIGHT_VEC);
+
 		float distance = Vector3.Distance(leftPosition, lastLeftPosition) + Vector3.Distance(rightPosition, lastRightPosition);
 
 		if (distance > MIN_DISTANCE) {
@@ -77,14 +88,30 @@ public class RibbonWriter : MonoBehaviour {
 			ClearTailSegment(NextTailSegment(currentSegmentIndex));
 		}
 
-		PositionTailSegment(currentSegmentIndex);
+		Vector3 position = transform.TransformPoint(MIDDLE_VEC);
+		float distanceTraveled = Vector3.Distance(lastPosition, position);
+		totalDistanceTraveled += distanceTraveled;
+		float speed = distanceTraveled / Time.deltaTime;
+		lastPosition = position;
+
+		float dash = Mathf.Sin(totalDistanceTraveled * 0.1f) / 2 + 1.5f + (speed - 100) * 0.003f;
+
+		for (int i = 0; i < headMesh.vertexCount; i++) {
+			headEdgeUVs[i].y = dash;
+		}
+
+		PositionTailSegment(currentSegmentIndex, dash);
 		UpdateTailMesh();
 	}
 
-	void PositionTailSegment(int index) {
+	void PositionTailSegment(int index, float dash) {
 		tailVertices[index * VERT_STRIDE + 1] = tail.transform.InverseTransformPoint(transform.TransformPoint(MIDDLE_VEC));
 		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  LEFT_VEC));
 		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( RIGHT_VEC));
+
+		tailEdgeUVs[index * VERT_STRIDE + 1].y = dash;
+		tailEdgeUVs[index * VERT_STRIDE + 0].y = dash;
+		tailEdgeUVs[index * VERT_STRIDE + 2].y = dash;
 	}
 
 	void FillTailSegment(int index) {
@@ -118,5 +145,7 @@ public class RibbonWriter : MonoBehaviour {
 		tailMesh.uv = tailEdgeUVs;
 		tailMesh.triangles = tailIndices;
 		tailMesh.RecalculateBounds();
+
+		headMesh.uv = headEdgeUVs;
 	}
 }

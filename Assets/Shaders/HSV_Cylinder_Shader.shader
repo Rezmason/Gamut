@@ -1,4 +1,4 @@
-﻿Shader "Unlit/ColorCubeShader"
+﻿Shader "Unlit/HSV_Cylinder_Shader"
 {
 	Properties
 	{
@@ -41,10 +41,24 @@
 				output.vertex = UnityObjectToClipPos(input.vertex);
 				return output;
 			}
+
+			// taken directly from http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+			fixed3 hsv2rgb(fixed3 c)
+			{
+			    fixed4 K = fixed4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+			    fixed3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
+			    return c.z * lerp(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+			}
 			
 			fixed4 frag (VertexOutput output) : SV_Target
 			{
-				fixed3 color = output.worldPosition + 0.5; // This varies from space to space, naturally
+				float3 pos = output.worldPosition; // This varies from space to space, naturally
+
+				float hue = degrees(atan2(pos.x, pos.z)) / 360; // good
+				float sat = length(pos.xz) * 2.0; // good
+				float val = pos.y + 0.5; // good
+
+				fixed3 color = hsv2rgb(fixed3(hue, sat, val));
 
 				// Edge data falls in range 1.0 to 2.0, so that meshes with no uv are rendered without edges.
 				if (output.edge.x >= 1.0) {
@@ -55,6 +69,7 @@
 
 				return fixed4(color, 1.0);
 			}
+
 			ENDCG
 		}
 	}

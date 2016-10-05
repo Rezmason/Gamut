@@ -21,9 +21,7 @@ public class InputHandler : MonoBehaviour {
           -Input.GetAxis("Mouse Y") * 50, 
           Input.GetAxis("Mouse X") * 100, 
           Input.GetAxis("Mouse X") * -50
-      );
-		Debug.Log(eulerAngles);
-
+      	);
 		transform.Rotate(eulerAngles * delta);
 	}
 }

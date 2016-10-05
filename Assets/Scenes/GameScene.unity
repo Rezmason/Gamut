@@ -4509,6 +4509,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objective: {fileID: 676742789}
   swatch: {fileID: 1703660492}
+  colorSpace: {fileID: 0}
 --- !u!1 &1973952427
 GameObject:
   m_ObjectHideFlags: 0

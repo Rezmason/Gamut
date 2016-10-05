@@ -2,7 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class CheckpointSystem : MonoBehaviour {
+public class CheckpointSystem : MonoSingleton<CheckpointSystem> {
+
+	public static CheckpointSystem Instance;
 
 	public GameObject objective;
 	public GameObject swatch;
@@ -11,6 +13,8 @@ public class CheckpointSystem : MonoBehaviour {
 	Color color;
 
 	void Start () {
+		Instance = this;
+
 		color = new Color();
 		color.a = 1;
 		SetCheckpoint();

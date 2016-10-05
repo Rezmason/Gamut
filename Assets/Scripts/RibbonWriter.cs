@@ -94,8 +94,8 @@ public class RibbonWriter : MonoBehaviour {
 		float speed = distanceTraveled / Time.deltaTime;
 		lastPosition = position;
 
-		float dash = Mathf.Sin(totalDistanceTraveled * 0.06f) * 0.5f + 1.5f + (speed - 100) * 0.003f;
-		float swoop = Mathf.Sin(totalDistanceTraveled * 0.13f) * 3f;
+		float dash = Mathf.Sin(totalDistanceTraveled * 0.13f) * 0.5f + 1.5f + (speed - 100) * 0.003f;
+		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 3f;
 
 		for (int i = 0; i < headMesh.vertexCount; i++) {
 			headEdgeUVs[i].y = dash;

@@ -18,8 +18,17 @@ Material:
     - first:
         name: _BrightnessTexture
       second:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 553df38a9c9ad4c7f9885094ccb51cfd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    m_Floats: []
+    m_Floats:
+    - first:
+        name: _DstBlend
+      second: 1
+    - first:
+        name: _SrcBlend
+      second: 1
+    - first:
+        name: _ZWrite
+      second: 0
     m_Colors: []

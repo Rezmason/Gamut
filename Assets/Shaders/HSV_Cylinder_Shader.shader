@@ -5,6 +5,7 @@
 		_BrightnessTexture ("Brightness Texture", 2D) = "white" {}
 		_SrcBlend ("Source Blending", Int) = 1
 		_DstBlend ("Destination Blending", Int) = 1
+		_ZWrite ("Draw to depth buffer", Int ) = 1
 	}
 	SubShader
 	{
@@ -12,6 +13,7 @@
 		LOD 100
 		Cull off
 		Blend [_SrcBlend] [_DstBlend]
+		ZWrite [_ZWrite]
 
 		Pass
 		{

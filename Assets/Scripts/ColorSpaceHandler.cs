@@ -7,6 +7,6 @@ public class ColorSpaceHandler : MonoBehaviour {
 	void Start () {
 		Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", transform.worldToLocalMatrix);
 
-		Debug.Log((int)BlendMode.One);
+//		Debug.Log((int)BlendMode.One);
 	}
 }

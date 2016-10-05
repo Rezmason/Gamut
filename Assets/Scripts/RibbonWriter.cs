@@ -10,10 +10,10 @@ public class RibbonWriter : MonoBehaviour {
 	Mesh headMesh;
 
 	Vector3[] tailVertices;
-	Vector2[] tailEdgeUVs;
+	Vector2[] tailEdgeUV2s;
 	int[] tailIndices;
 
-	Vector2[] headEdgeUVs;
+	Vector2[] headEdgeUV2s;
 
 	int currentSegmentIndex;
 
@@ -45,16 +45,16 @@ public class RibbonWriter : MonoBehaviour {
 		headMesh = head.GetComponent<MeshFilter>().mesh;
 
 		tailVertices = new Vector3[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
-		tailEdgeUVs = new Vector2[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
+		tailEdgeUV2s = new Vector2[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
 		tailIndices = new int[INDEX_STRIDE * TOTAL_TAIL_SEGMENTS];
-		headEdgeUVs = headMesh.uv;
+		headEdgeUV2s = headMesh.uv;
 
 		int i;
 
 		for (i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
-			tailEdgeUVs[i * VERT_STRIDE + 0].x = 2;
-			tailEdgeUVs[i * VERT_STRIDE + 1].x = 1;
-			tailEdgeUVs[i * VERT_STRIDE + 2].x = 2;
+			tailEdgeUV2s[i * VERT_STRIDE + 0].x = 2;
+			tailEdgeUV2s[i * VERT_STRIDE + 1].x = 1;
+			tailEdgeUV2s[i * VERT_STRIDE + 2].x = 2;
 			PositionTailSegment(i);
 			FillTailSegment(i);
 		}
@@ -98,7 +98,7 @@ public class RibbonWriter : MonoBehaviour {
 		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 3f;
 
 		for (int i = 0; i < headMesh.vertexCount; i++) {
-			headEdgeUVs[i].y = dash;
+			headEdgeUV2s[i].y = dash;
 		}
 		head.transform.localPosition = new Vector3(0, swoop, -RIBBON_SCALE);
 
@@ -111,9 +111,9 @@ public class RibbonWriter : MonoBehaviour {
 		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  LEFT_VEC) + transform.up * swoop);
 		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( RIGHT_VEC) + transform.up * swoop);
 
-		tailEdgeUVs[index * VERT_STRIDE + 1].y = dash;
-		tailEdgeUVs[index * VERT_STRIDE + 0].y = dash;
-		tailEdgeUVs[index * VERT_STRIDE + 2].y = dash;
+		tailEdgeUV2s[index * VERT_STRIDE + 1].y = dash;
+		tailEdgeUV2s[index * VERT_STRIDE + 0].y = dash;
+		tailEdgeUV2s[index * VERT_STRIDE + 2].y = dash;
 	}
 
 	void FillTailSegment(int index) {
@@ -144,10 +144,10 @@ public class RibbonWriter : MonoBehaviour {
 
 	void UpdateTailMesh() {
 		tailMesh.vertices = tailVertices;
-		tailMesh.uv = tailEdgeUVs;
+		tailMesh.uv2 = tailEdgeUV2s;
 		tailMesh.triangles = tailIndices;
 		tailMesh.RecalculateBounds();
 
-		headMesh.uv = headEdgeUVs;
+		headMesh.uv2 = headEdgeUV2s;
 	}
 }

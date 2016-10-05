@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: HSV_Cylinder_Material
-  m_Shader: {fileID: 4800000, guid: 63f63a61d3ed544d099f3f197f15ceaa, type: 3}
+  m_Name: RGB_Cube_Particle_Material
+  m_Shader: {fileID: 4800000, guid: 145dc93a9955d472796c4a0e919f71b2, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
   m_CustomRenderQueue: -1
@@ -16,19 +16,7 @@ Material:
     serializedVersion: 2
     m_TexEnvs:
     - first:
-        name: _AlphaTexture
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
         name: _BrightnessTexture
-      second:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - first:
-        name: _brightnessTexture
       second:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}

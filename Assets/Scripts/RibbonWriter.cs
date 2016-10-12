@@ -23,7 +23,7 @@ public class RibbonWriter : MonoBehaviour {
 
 	float totalDistanceTraveled;
 
-	const float RIBBON_SCALE = 5f;
+	const float RIBBON_SCALE = 4f;
 	const int TOTAL_TAIL_SEGMENTS = 1000;
 	const int VERT_STRIDE = 3;
 	const int INDEX_STRIDE = 3 * 4;

@@ -2,18 +2,34 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class CheckpointSystem : MonoSingleton<CheckpointSystem> {
+public class CheckpointSystem {
 
-	public static CheckpointSystem Instance;
+	GameObject objective;
+	GameObject swatch;
 
-	public GameObject objective;
-	public GameObject swatch;
-	public GameObject colorSpace;
+	static CheckpointSystem _instance;
+	public static CheckpointSystem instance
+	{
+		get { 
+			if (_instance == null) {
+				_instance = new CheckpointSystem();
+			}
+			return _instance; 
+		}
+	}
+
+	CheckpointSystem() {
+		
+	}
 
 	Color color;
 
-	void Start () {
-		Instance = this;
+	public void Init () {
+		swatch = GameObject.Find("Swatch");
+
+		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
+		objective.AddComponent<CheckpointBehavior>().collisionHandler = RespondToCollision;
+		objective.transform.localScale = new Vector3(10, 10, 10);
 
 		color = new Color();
 		color.a = 1;
@@ -25,10 +41,23 @@ public class CheckpointSystem : MonoSingleton<CheckpointSystem> {
 		color.g = Random.value;
 		color.b = Random.value;
 		swatch.GetComponent<Image>().color = color;
+
+		objective.transform.localPosition = new Vector3(Random.value - 0.5f, Random.value - 0.5f, Random.value - 0.5f) * 200;
 	}
 
-	// Update is called once per frame
-	void Update () {
-		
+	void RespondToCollision() {
+		Debug.Log("!!");
+		SetCheckpoint();
+	}
+}
+
+class CheckpointBehavior : MonoBehaviour {
+
+	public delegate void CollisionHandlerType();
+	public CollisionHandlerType collisionHandler = null;
+
+	void OnCollisionEnter (Collision collision) {
+		Debug.Log(collision.collider.name);
+		collisionHandler();
 	}
 }

@@ -26,20 +26,16 @@ public class InputHandler : MonoBehaviour {
 		if (!paused) {
 			speed = speed * SPEED_CHANGE_RATIO + (Input.GetKey("space") ? 200 : 100) * (1 - SPEED_CHANGE_RATIO);
 			transform.position += transform.forward * delta * speed;
-			UpdateNaiveControlScheme(delta);
+
+			eulerAngles += new Vector3(
+				-Input.GetAxis("Mouse Y") * 40, 
+				Input.GetAxis("Mouse X") * 80, 
+				Input.GetAxis("Mouse X") * -50
+			);
+
+			eulerAngles *= 0.95f;
+
+			transform.Rotate(eulerAngles * delta);
 		}
-	}
-
-	void UpdateNaiveControlScheme(float delta) {
-
-		eulerAngles += new Vector3(
-          -Input.GetAxis("Mouse Y") * 40, 
-          Input.GetAxis("Mouse X") * 80, 
-          Input.GetAxis("Mouse X") * -50
-      	);
-
-		eulerAngles *= 0.95f;
-
-		transform.Rotate(eulerAngles * delta);
 	}
 }

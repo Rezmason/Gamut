@@ -2,25 +2,30 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class CheckpointSystem {
+public class GameSystem {
 
 	GameObject objective;
 	GameObject swatch;
 	GameObject ribbonHead;
+	bool _paused;
 
-	static CheckpointSystem _instance;
-	public static CheckpointSystem instance
+	public bool paused {
+		get { return _paused; }
+	}
+
+	static GameSystem _instance;
+	public static GameSystem instance
 	{
 		get { 
 			if (_instance == null) {
-				_instance = new CheckpointSystem();
+				_instance = new GameSystem();
 			}
 			return _instance; 
 		}
 	}
 
-	CheckpointSystem() {
-		
+	GameSystem() {
+		_paused = true;
 	}
 
 	Color color;
@@ -53,6 +58,14 @@ public class CheckpointSystem {
 		Debug.Log("!!");
 		SetCheckpoint();
 	}
+
+	public bool TogglePaused()
+	{
+		_paused = !_paused;
+		Cursor.lockState = _paused ? CursorLockMode.None : CursorLockMode.Locked;
+		Cursor.visible = _paused;
+		return _paused;
+	}
 }
 
 class CheckpointBehavior : MonoBehaviour {
@@ -70,6 +83,6 @@ class CheckpointBehavior : MonoBehaviour {
 			accumulatedProximity = 0;
 			collisionHandler();
 		}
-		Debug.Log(accumulatedProximity.ToString());
+		//Debug.Log(accumulatedProximity.ToString());
 	}
 }

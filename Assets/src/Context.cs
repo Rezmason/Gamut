@@ -24,7 +24,7 @@ public class Context
 		activeColorSpace = 0;
 		colorSpaces[activeColorSpace].SetActive(true);
 
-		CheckpointSystem.instance.Init();
+		GameSystem.instance.Init();
 		// TODO: Turn RibbonWriter script into RibbonDancer system
 	}
 }

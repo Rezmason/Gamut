@@ -3,7 +3,7 @@ using System.Collections;
 
 public class RibbonWriter : MonoBehaviour {
 
-	public GameObject tail;
+	GameObject tail;
 	public GameObject head;
 
 	Mesh tailMesh;
@@ -38,7 +38,10 @@ public class RibbonWriter : MonoBehaviour {
 		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
 		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
 
-		MeshFilter tailMeshFilter = tail.GetComponent<MeshFilter>();
+		tail = new GameObject();
+		tail.AddComponent<MeshRenderer>().material = head.GetComponent<MeshRenderer>().material;
+
+		MeshFilter tailMeshFilter = tail.AddComponent<MeshFilter>();
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;
 
@@ -94,7 +97,7 @@ public class RibbonWriter : MonoBehaviour {
 		float speed = distanceTraveled / Time.deltaTime;
 		lastPosition = position;
 
-		float dash = Mathf.Sin(totalDistanceTraveled * 0.13f) * 0.5f + 1.5f + (speed - 100) * 0.003f;
+		float dash = Mathf.Sin(totalDistanceTraveled * 0.13f) * 0.5f + 1.5f + (speed - 50) * 0.003f;
 		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 3f;
 
 		for (int i = 0; i < headMesh.vertexCount; i++) {

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class EntryPointHandler : MonoBehaviour {
-	void Start () {
+	void Awake () {
 		Context.Init(gameObject);
 	}
 }

@@ -13,7 +13,7 @@
 		LOD 100
 		Cull off
 		Blend [_SrcBlend] [_DstBlend]
-		ZWrite [_ZWrite]
+		ZWrite Off
 
 		Pass
 		{

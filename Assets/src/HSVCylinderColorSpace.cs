@@ -4,7 +4,11 @@ public class HSVCylinderColorSpace : ColorSpace
 {
 	public HSVCylinderColorSpace()
 	{
-		Init(GameObject.Instantiate(Resources.Load("Prefabs/ColorSpaces/ColorSpace_HSV_Cylinder")) as GameObject);
+		Init(
+			GameObject.Instantiate(Resources.Load("Prefabs/ColorSpaces/ColorSpace_HSV_Cylinder")) as GameObject,
+			GameObject.Instantiate(Resources.Load("Materials/HSV_Cylinder_Material")) as Material,
+			new Vector3(0, 500, 0)
+		);
 	}
 
 	public override Color ColorFromWorldPosition(Vector3 worldPosition) {

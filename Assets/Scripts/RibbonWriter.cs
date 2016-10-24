@@ -38,9 +38,12 @@ public class RibbonWriter : MonoBehaviour {
 		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
 		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
 
-		tail = new GameObject();
-		tail.AddComponent<MeshRenderer>().material = head.GetComponent<MeshRenderer>().material;
+		Material colorSpaceMaterial = GameSystem.instance.activeColorSpace.material;
 
+		head.GetComponent<MeshRenderer>().material = colorSpaceMaterial;
+
+		tail = new GameObject();
+		tail.AddComponent<MeshRenderer>().material = colorSpaceMaterial;
 		MeshFilter tailMeshFilter = tail.AddComponent<MeshFilter>();
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;

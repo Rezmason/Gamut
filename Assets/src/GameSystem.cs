@@ -7,10 +7,18 @@ public class GameSystem {
 
 	GameObject objective;
 	GameObject swatch;
+	GameObject player;
 	GameObject ribbonHead;
+	GameObject mainCamera;
 	bool _paused;
-	static List<ColorSpace> colorSpaces;
-	static int activeColorSpace;
+	List<ColorSpace> colorSpaces;
+	int activeColorSpaceIndex;
+
+	public ColorSpace activeColorSpace { 
+		get { 
+			return colorSpaces[activeColorSpaceIndex];
+		} 
+	}
 
 	public bool paused {
 		get { return _paused; }
@@ -31,28 +39,28 @@ public class GameSystem {
 		_paused = true;
 	}
 
-	Color color;
-
 	public void Init () {
 		colorSpaces = new List<ColorSpace>();
 		colorSpaces.Add(new HSVCylinderColorSpace());
 		colorSpaces.Add(new RGBCubeColorSpace());
 
-		activeColorSpace = 0;
-		colorSpaces[activeColorSpace].active = true;
+		activeColorSpaceIndex = 0;
+		activeColorSpace.active = true;
 
 		swatch = GameObject.Find("Swatch");
-		ribbonHead = GameObject.Find("RibbonHead");
+		player = GameObject.Find("Player");
+		ribbonHead = player.transform.Find("RibbonHead").gameObject;
+		mainCamera = player.transform.Find("Main Camera").gameObject;
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
-		ObjectiveBehavior checkpointBehavior = objective.AddComponent<ObjectiveBehavior>();
-		checkpointBehavior.collisionHandler = RespondToCollision;
-		checkpointBehavior.mainCamera = GameObject.Find("Main Camera");
-		checkpointBehavior.ribbonHead = ribbonHead;
-		//objective.transform.localScale = new Vector3(10, 10, 10);
+		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
+		objectiveBehavior.collisionHandler = RespondToCollision;
+		objectiveBehavior.mainCamera = mainCamera;
+		objectiveBehavior.ribbonHead = ribbonHead;
+		FaceCameraBehavior faceCameraBehavior = objective.AddComponent<FaceCameraBehavior>();
+		faceCameraBehavior.mainCamera = mainCamera;
 
-		color = new Color();
-		color.a = 1;
+
 		SetCheckpoint();
 
 		/*
@@ -66,14 +74,14 @@ public class GameSystem {
 			GameObject copy = GameObject.Instantiate(objective);
 			copy.transform.position = pos;
 			copy.transform.localScale = Vector3.one * 10;
-			copy.GetComponent<MeshRenderer>().material.color = colorSpaces[activeColorSpace].ColorFromWorldPosition(pos);
+			copy.GetComponent<MeshRenderer>().material.color = activeColorSpace.ColorFromWorldPosition(pos);
 		}
 		*/
 	}
 
 	void SetCheckpoint() {
-		objective.transform.localPosition = colorSpaces[activeColorSpace].GetRandomObjectivePosition();
-		Color color = colorSpaces[activeColorSpace].ColorFromWorldPosition(objective.transform.position);
+		objective.transform.localPosition = activeColorSpace.GetRandomObjectivePosition();
+		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		swatch.GetComponent<Image>().color = color;
 	}

@@ -4,7 +4,23 @@ public abstract class ColorSpace
 {
 	protected GameObject _gameObject;
 	public GameObject gameObject {
-		get { return _gameObject; }
+		get { 
+			return _gameObject; 
+		}
+	}
+
+	protected Material _material;
+	public Material material {
+		get {
+			return _material;
+		}
+	}
+
+	protected Vector3 _whitePointPosition;
+	public Vector3 whitePointPosition {
+		get {
+			return _whitePointPosition;
+		}
 	}
 
 	private bool _active;
@@ -17,9 +33,11 @@ public abstract class ColorSpace
 		}
 	}
 
-	protected void Init(GameObject gameObject) {
+	protected void Init(GameObject gameObject, Material material, Vector3 whitePointPosition) {
 		_gameObject = gameObject;
 		_gameObject.SetActive(_active);
+		_material = material;
+		_whitePointPosition = whitePointPosition;
 	}
 
 	public abstract Color ColorFromWorldPosition(Vector3 position);

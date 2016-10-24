@@ -13,7 +13,6 @@ class ObjectiveBehavior : MonoBehaviour {
 
 	void Update() {
 		AccumulateProximity();
-		FaceCamera();
 		ScaleWithCameraDistance();
 	}
 
@@ -27,13 +26,8 @@ class ObjectiveBehavior : MonoBehaviour {
 		//Debug.Log(accumulatedProximity.ToString());
 	}
 
-	void FaceCamera() {
-		transform.LookAt(transform.position + mainCamera.transform.rotation * Vector3.forward, mainCamera.transform.rotation * Vector3.up);
-		transform.Rotate(Vector3.forward * Time.time * 40);
-	}
-
 	void ScaleWithCameraDistance() {
 		float dist = Vector3.Distance(transform.position, mainCamera.transform.position);
-		transform.localScale = Vector3.one * (10 + 500000 / Mathf.Pow(dist, 2));
+		transform.localScale = Vector3.one * (10 + Mathf.Pow(700 / dist, 2));
 	}
 }

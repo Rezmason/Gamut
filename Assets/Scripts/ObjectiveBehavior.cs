@@ -34,6 +34,6 @@ class ObjectiveBehavior : MonoBehaviour {
 
 	void ScaleWithCameraDistance() {
 		float dist = Vector3.Distance(transform.position, mainCamera.transform.position);
-		transform.localScale = Vector3.one * (20 + 500000 / Mathf.Pow(dist, 2));
+		transform.localScale = Vector3.one * (10 + 500000 / Mathf.Pow(dist, 2));
 	}
 }

@@ -33,23 +33,13 @@
 			struct VertexOutput
 			{
 				float4 vertex : SV_POSITION;
-				float3 worldPosition : TEXCOORD0;
+				float3 color : TEXCOORD0;
 				float4 brightnessUV : TEXCOORD1;
 				float2 edge : TEXCOORD2;
 			};
 
 			uniform float4x4 _InvertedColorSpaceTransform;
 			uniform sampler2D _BrightnessTexture;
-
-			VertexOutput vert (VertexInput input)
-			{
-				VertexOutput output;
-				output.worldPosition = mul(_InvertedColorSpaceTransform, mul(unity_ObjectToWorld, input.vertex)).xyz;
-				output.brightnessUV = input.brightnessUV;
-				output.edge = input.edge;
-				output.vertex = UnityObjectToClipPos(input.vertex);
-				return output;
-			}
 
 			// taken directly from http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
 			fixed3 hsv2rgb(fixed3 c)
@@ -58,17 +48,27 @@
 			    fixed3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
 			    return c.z * lerp(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 			}
-			
-			fixed4 frag (VertexOutput output) : SV_Target
+
+			VertexOutput vert (VertexInput input)
 			{
-				float3 pos = output.worldPosition; // This varies from space to space, naturally
+				VertexOutput output;
+				float3 pos = mul(_InvertedColorSpaceTransform, mul(unity_ObjectToWorld, input.vertex)).xyz;
 
 				float hue = degrees(atan2(pos.x, pos.z)) / 360; // good
 				float sat = length(pos.xz) * 2.0; // good
 				float val = pos.y + 0.5; // good
 
-				fixed3 color = hsv2rgb(fixed3(hue, sat, val));
+				output.color = hsv2rgb(fixed3(hue, sat, val));
 
+				output.brightnessUV = input.brightnessUV;
+				output.edge = input.edge;
+				output.vertex = UnityObjectToClipPos(input.vertex);
+				return output;
+			}
+
+			fixed4 frag (VertexOutput output) : SV_Target
+			{
+				float3 color = output.color;
 				// Edge data falls in range 1.0 to 2.0, so that meshes with no uv are rendered without edges.
 
 				if (output.edge.y >= 1.0) {

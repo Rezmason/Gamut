@@ -33,7 +33,7 @@
 			struct VertexOutput
 			{
 				float4 vertex : SV_POSITION;
-				float3 worldPosition : TEXCOORD0;
+				float3 color : TEXCOORD0;
 				float4 brightnessUV : TEXCOORD1;
 				float2 edge : TEXCOORD2;
 			};
@@ -44,7 +44,8 @@
 			VertexOutput vert (VertexInput input)
 			{
 				VertexOutput output;
-				output.worldPosition = mul(_InvertedColorSpaceTransform, mul(unity_ObjectToWorld, input.vertex)).xyz;
+				float3 pos = mul(_InvertedColorSpaceTransform, mul(unity_ObjectToWorld, input.vertex)).xyz;
+				output.color = pos + 0.5; // This varies from space to space, naturally
 				output.brightnessUV = input.brightnessUV;
 				output.edge = input.edge;
 				output.vertex = UnityObjectToClipPos(input.vertex);
@@ -53,7 +54,7 @@
 			
 			fixed4 frag (VertexOutput output) : SV_Target
 			{
-				fixed3 color = output.worldPosition + 0.5; // This varies from space to space, naturally
+				fixed3 color = output.color;
 
 				// Edge data falls in range 1.0 to 2.0, so that meshes with no uv are rendered without edges.
 				if (output.edge.x >= 1.0) {

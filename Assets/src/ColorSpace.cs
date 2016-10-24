@@ -14,7 +14,6 @@ public abstract class ColorSpace
 			_active = value;
 			_gameObject.SetActive(value);
 			Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _gameObject.transform.worldToLocalMatrix);
-			Debug.Log("Active color space: " + this);
 		}
 	}
 

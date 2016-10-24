@@ -45,8 +45,9 @@ public class GameSystem {
 		ribbonHead = GameObject.Find("RibbonHead");
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
-		CheckpointBehavior checkpointBehavior = objective.AddComponent<CheckpointBehavior>();
+		ObjectiveBehavior checkpointBehavior = objective.AddComponent<ObjectiveBehavior>();
 		checkpointBehavior.collisionHandler = RespondToCollision;
+		checkpointBehavior.mainCamera = GameObject.Find("Main Camera");
 		checkpointBehavior.ribbonHead = ribbonHead;
 		//objective.transform.localScale = new Vector3(10, 10, 10);
 
@@ -87,24 +88,5 @@ public class GameSystem {
 		Cursor.lockState = _paused ? CursorLockMode.None : CursorLockMode.Locked;
 		Cursor.visible = _paused;
 		return _paused;
-	}
-}
-
-class CheckpointBehavior : MonoBehaviour {
-
-	static float GOAL_ACCUM_PROXIMITY = 1.0f;
-	public delegate void CollisionHandlerType();
-	public CollisionHandlerType collisionHandler = null;
-	public GameObject ribbonHead;
-	float accumulatedProximity = 0;
-
-	void Update() {
-		float proximity = 1 / Vector3.Distance(ribbonHead.transform.position, transform.position);
-		accumulatedProximity = Mathf.Max(0, accumulatedProximity + proximity) * 0.9f;
-		if (accumulatedProximity > GOAL_ACCUM_PROXIMITY) {
-			accumulatedProximity = 0;
-			collisionHandler();
-		}
-		//Debug.Log(accumulatedProximity.ToString());
 	}
 }

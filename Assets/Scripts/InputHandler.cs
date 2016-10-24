@@ -28,7 +28,7 @@ public class InputHandler : MonoBehaviour {
 			eulerAngles += new Vector3(
 				-Input.GetAxis("Mouse Y") * 20, 
 				Input.GetAxis("Mouse X") * 50, 
-				Input.GetAxis("Mouse X") * -30
+				Input.GetAxis("Mouse X") * -30 + speed * 0.01f
 			);
 
 			eulerAngles *= 0.95f;

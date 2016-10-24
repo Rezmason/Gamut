@@ -1,4 +1,4 @@
-﻿Shader "Unlit/HSV_Cylinder_Shader"
+﻿Shader "Gamut/HSV_Cylinder_Shader"
 {
 	Properties
 	{

@@ -1,4 +1,4 @@
-﻿Shader "Unlit/BasicDoubleSidedShader"
+﻿Shader "Gamut/BasicDoubleSidedShader"
 {
 	Properties
 	{

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InputSystem : Thingleton<InputSystem> {
+public class InputSystem : Thingleton<InputSystem>, ISystem {
 
 	const float SPEED_CHANGE_RATIO = 0.99f;
 	const float START_SPEED = 80;
@@ -10,7 +10,7 @@ public class InputSystem : Thingleton<InputSystem> {
 	float speed = START_SPEED;
 	GameObject player;
 
-	public override void Init() {
+	public void Setup() {
 		player = GameObject.FindWithTag("Player");
 	}
 
@@ -37,5 +37,9 @@ public class InputSystem : Thingleton<InputSystem> {
 			eulerAngles *= 0.95f;
 			player.transform.Rotate(eulerAngles * delta);
 		}
+	}
+
+	public void Run() {
+
 	}
 }

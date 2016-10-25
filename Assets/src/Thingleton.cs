@@ -15,6 +15,4 @@ public abstract class Thingleton<Clazz> where Clazz : Thingleton<Clazz>, new() {
 	public Thingleton() {
 
 	}
-
-	public abstract void Init();
 }

@@ -4,11 +4,13 @@ using System.Collections;
 public class Updater : MonoBehaviour
 {
 	public delegate void updateMethodType();
-	public updateMethodType updateMethod;
+	public event updateMethodType updateMethod;
 
 	void Update()
 	{
-		updateMethod();
+		if (updateMethod != null) {
+			updateMethod();
+		}
 	}
 }
 

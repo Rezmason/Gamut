@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RibbonSystem : Thingleton<RibbonSystem> {
+public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 	GameObject player;
 	GameObject tail;
@@ -34,7 +34,7 @@ public class RibbonSystem : Thingleton<RibbonSystem> {
 	readonly Vector3 RIGHT_VEC = new Vector3(RIBBON_SCALE, 0, -RIBBON_SCALE);
 
 
-	public override void Init() {
+	public void Setup() {
 
 		player = GameObject.FindWithTag("Player");
 		head = player.transform.Find("RibbonHead").gameObject;
@@ -116,6 +116,10 @@ public class RibbonSystem : Thingleton<RibbonSystem> {
 
 		PositionTailSegment(currentSegmentIndex, dash, swoop);
 		UpdateTailMesh();
+	}
+
+	public void Run() {
+
 	}
 
 	void PositionTailSegment(int index, float dash = 0, float swoop = 0) {

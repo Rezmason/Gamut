@@ -1,11 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class GameSystem : Thingleton<GameSystem> {
+public class GameSystem : Thingleton<GameSystem>, ISystem {
 
-	const float MIN_DISTANCE = 100;
+	const float MIN_DISTANCE = 200;
 	GameObject objective;
 	GameObject swatch;
 	Text tScore;
@@ -39,7 +38,7 @@ public class GameSystem : Thingleton<GameSystem> {
 	}
 	*/
 
-	public override void Init () {
+	public void Setup () {
 		colorSpaces = new List<ColorSpace>();
 		colorSpaces.Add(new HSVCylinderColorSpace());
 		colorSpaces.Add(new RGBCubeColorSpace());
@@ -55,7 +54,7 @@ public class GameSystem : Thingleton<GameSystem> {
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
-		objectiveBehavior.collisionHandler = RespondToCollision;
+		objectiveBehavior.collisionHandler += RespondToCollision;
 		objectiveBehavior.subject = subject;
 		objective.AddComponent<FaceCameraBehavior>().scaleMag = 900;
 
@@ -72,6 +71,10 @@ public class GameSystem : Thingleton<GameSystem> {
 		}
 	}
 
+	public void Run() {
+
+	}
+
 	void ResetTime() {
 		timeRemaining = 10 + 20 / (score * 0.1f + 1);
 		tClock.text = timeRemaining.ToString("0.00");
@@ -81,10 +84,8 @@ public class GameSystem : Thingleton<GameSystem> {
 		Vector3 position = objective.transform.position;
 		Vector3 nextPosition = position;
 
-		uint count = 0;
 		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE) {
 			nextPosition = activeColorSpace.GetRandomObjectivePosition();
-			count++;
 		}
 
 		objective.transform.position = nextPosition;

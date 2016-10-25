@@ -20,5 +20,6 @@ public class Context
 	static void UpdateHandler() {
 		InputSystem.instance.Update();
 		RibbonSystem.instance.Update();
+		GameSystem.instance.Update();
 	}
 }

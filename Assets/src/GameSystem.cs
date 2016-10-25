@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	public event SimpleDelegate endGame;
+	public event SimpleDelegate startGame;
 	const float MIN_DISTANCE = 200;
 	GameObject objective;
 	GameObject swatch;
@@ -114,6 +115,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		SetCheckpoint();
 
 		UpdateState();
+		startGame();
 	}
 
 	void EndGame() {

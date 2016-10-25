@@ -59,19 +59,22 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		tailIndices = new int[INDEX_STRIDE * TOTAL_TAIL_SEGMENTS];
 		headEdgeUV2s = headMesh.uv;
 
-		int i;
-
-		for (i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
+		for (int i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
 			tailEdgeUV2s[i * VERT_STRIDE + 0].x = 2;
 			tailEdgeUV2s[i * VERT_STRIDE + 1].x = 1;
 			tailEdgeUV2s[i * VERT_STRIDE + 2].x = 2;
+		}
+
+		Reset();
+	}
+
+	public void Reset() {
+		for (int i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
 			PositionTailSegment(i);
 			FillTailSegment(i);
 		}
-
 		currentSegmentIndex = 0;
 		totalDistanceTraveled = 0;
-
 		UpdateTailMesh();
 	}
 
@@ -85,8 +88,13 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 	public void Update () {
 		if (!GameSystem.instance.gameRunning) {
+			head.SetActive(false);
+			tail.SetActive(false);
 			return;
 		}
+
+		head.SetActive(true);
+		tail.SetActive(true);
 
 		Transform transform = player.transform;
 

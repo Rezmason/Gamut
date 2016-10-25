@@ -1,19 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InputHandler : MonoBehaviour {
+public class InputSystem : Thingleton<InputSystem> {
 
 	const float SPEED_CHANGE_RATIO = 0.99f;
 	const float START_SPEED = 80;
 	const float MAX_SPEED = 150;
-	Vector3 eulerAngles;
-	float speed;
+	Vector3 eulerAngles = new Vector3();
+	float speed = START_SPEED;
+	GameObject player;
 
-	void Start() {
-		speed = START_SPEED;
+	public override void Init() {
+		player = GameObject.FindWithTag("Player");
 	}
-	
-	void Update() {
+
+	public void Update() {
 		bool paused = GameSystem.instance.paused;
 		float delta = Time.deltaTime;
 
@@ -23,7 +24,11 @@ public class InputHandler : MonoBehaviour {
 
 		if (!paused) {
 			speed = speed * SPEED_CHANGE_RATIO + (Input.GetKey("space") ? MAX_SPEED : START_SPEED) * (1 - SPEED_CHANGE_RATIO);
-			transform.position += transform.forward * delta * speed;
+			player.transform.position += player.transform.forward * delta * speed;
+			Camera cam = Camera.current;
+			if (cam != null) {
+				cam.fieldOfView = cam.fieldOfView * SPEED_CHANGE_RATIO + (60 + speed * 0.5f) * (1 - SPEED_CHANGE_RATIO);
+			}
 
 			eulerAngles += new Vector3(
 				-Input.GetAxis("Mouse Y") * 20, 
@@ -32,8 +37,7 @@ public class InputHandler : MonoBehaviour {
 			);
 
 			eulerAngles *= 0.95f;
-
-			transform.Rotate(eulerAngles * delta);
+			player.transform.Rotate(eulerAngles * delta);
 		}
 	}
 }

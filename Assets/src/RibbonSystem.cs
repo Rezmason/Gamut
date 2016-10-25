@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class RibbonWriter : MonoBehaviour {
+public class RibbonSystem : Thingleton<RibbonSystem> {
 
+	GameObject player;
 	GameObject tail;
 	public GameObject head;
 
@@ -33,7 +34,10 @@ public class RibbonWriter : MonoBehaviour {
 	readonly Vector3 RIGHT_VEC = new Vector3(RIBBON_SCALE, 0, -RIBBON_SCALE);
 
 
-	void Start () {
+	public override void Init() {
+
+		player = GameObject.FindWithTag("Player");
+		head = player.transform.Find("RibbonHead").gameObject;
 
 		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
 		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
@@ -79,7 +83,9 @@ public class RibbonWriter : MonoBehaviour {
 		return (TOTAL_TAIL_SEGMENTS + index + 1) % TOTAL_TAIL_SEGMENTS;
 	}
 
-	void Update () {
+	public void Update () {
+		Transform transform = player.transform;
+
 		Vector3  leftPosition = transform.TransformPoint(LEFT_VEC);
 		Vector3 rightPosition = transform.TransformPoint(RIGHT_VEC);
 
@@ -113,6 +119,7 @@ public class RibbonWriter : MonoBehaviour {
 	}
 
 	void PositionTailSegment(int index, float dash = 0, float swoop = 0) {
+		Transform transform = player.transform;
 		tailVertices[index * VERT_STRIDE + 1] = tail.transform.InverseTransformPoint(transform.TransformPoint(MIDDLE_VEC) + transform.up * swoop);
 		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  LEFT_VEC) + transform.up * swoop);
 		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( RIGHT_VEC) + transform.up * swoop);

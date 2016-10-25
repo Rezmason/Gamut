@@ -3,14 +3,13 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class GameSystem {
+public class GameSystem : Thingleton<GameSystem> {
 
 	GameObject objective;
 	GameObject swatch;
 	GameObject player;
 	GameObject ribbonHead;
-	GameObject mainCamera;
-	bool _paused;
+	bool _paused = true;
 	List<ColorSpace> colorSpaces;
 	int activeColorSpaceIndex;
 
@@ -24,22 +23,7 @@ public class GameSystem {
 		get { return _paused; }
 	}
 
-	static GameSystem _instance;
-	public static GameSystem instance
-	{
-		get { 
-			if (_instance == null) {
-				_instance = new GameSystem();
-			}
-			return _instance; 
-		}
-	}
-
-	GameSystem() {
-		_paused = true;
-	}
-
-	public void Init () {
+	public override void Init () {
 		colorSpaces = new List<ColorSpace>();
 		colorSpaces.Add(new HSVCylinderColorSpace());
 		colorSpaces.Add(new RGBCubeColorSpace());
@@ -47,19 +31,15 @@ public class GameSystem {
 		activeColorSpaceIndex = 0;
 		activeColorSpace.active = true;
 
-		swatch = GameObject.Find("Swatch");
-		player = GameObject.Find("Player");
+		swatch = GameObject.FindWithTag("Swatch");
+		player = GameObject.FindWithTag("Player");
 		ribbonHead = player.transform.Find("RibbonHead").gameObject;
-		mainCamera = player.transform.Find("Main Camera").gameObject;
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler = RespondToCollision;
-		objectiveBehavior.mainCamera = mainCamera;
 		objectiveBehavior.ribbonHead = ribbonHead;
-		FaceCameraBehavior faceCameraBehavior = objective.AddComponent<FaceCameraBehavior>();
-		faceCameraBehavior.mainCamera = mainCamera;
-
+		objective.AddComponent<FaceCameraBehavior>();
 
 		SetCheckpoint();
 
@@ -80,7 +60,8 @@ public class GameSystem {
 	}
 
 	void SetCheckpoint() {
-		objective.transform.localPosition = activeColorSpace.GetRandomObjectivePosition();
+		
+		objective.transform.position = activeColorSpace.GetRandomObjectivePosition();
 		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		swatch.GetComponent<Image>().color = color;

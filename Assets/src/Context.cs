@@ -7,9 +7,18 @@ public class Context
 	{
 		GameObject.Instantiate(Resources.Load("Prefabs/EventSystem"));
 		GameObject.Instantiate(Resources.Load("Prefabs/GUI"));
-		// TODO: populate rest of the scene from prefabs
+		GameObject.Instantiate(Resources.Load("Prefabs/Player"));
 
+		InputSystem.instance.Init();
 		GameSystem.instance.Init();
-		// TODO: Turn RibbonWriter script into RibbonDancer system
+		RibbonSystem.instance.Init();
+		// TODO: Turn RibbonWriter script into RibbonSystem
+
+		gameObject.AddComponent<Updater>().updateMethod = UpdateHandler;
+	}
+
+	static void UpdateHandler() {
+		InputSystem.instance.Update();
+		RibbonSystem.instance.Update();
 	}
 }

@@ -15,14 +15,13 @@ public class InputSystem : Thingleton<InputSystem> {
 	}
 
 	public void Update() {
-		bool paused = GameSystem.instance.paused;
 		float delta = Time.deltaTime;
 
 		if (Input.GetKeyDown("escape")) {
-			paused = GameSystem.instance.TogglePaused();
+			GameSystem.instance.TogglePaused();
 		}
 
-		if (!paused) {
+		if (GameSystem.instance.gameRunning) {
 			speed = speed * SPEED_CHANGE_RATIO + (Input.GetKey("space") ? MAX_SPEED : START_SPEED) * (1 - SPEED_CHANGE_RATIO);
 			player.transform.position += player.transform.forward * delta * speed;
 			Camera cam = Camera.current;

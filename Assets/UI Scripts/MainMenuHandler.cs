@@ -7,7 +7,7 @@ public class MainMenuHandler : MonoBehaviour {
 	
 	public void StartGame() {
 		gameObject.SetActive(false);
-		GameSystem.instance.TogglePaused();
+		GameSystem.instance.StartGame();
 	}
 
 	public void AboutGame() {

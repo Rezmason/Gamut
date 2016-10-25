@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Updater : MonoBehaviour
 {
-	public delegate void updateMethodType();
-	public event updateMethodType updateMethod;
+	public event SimpleDelegate updateMethod;
 
 	void Update()
 	{

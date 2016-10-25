@@ -84,15 +84,19 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 	}
 
 	public void Update () {
+		if (!GameSystem.instance.gameRunning) {
+			return;
+		}
+
 		Transform transform = player.transform;
 
-		Vector3  leftPosition = transform.TransformPoint(LEFT_VEC);
+		Vector3 leftPosition = transform.TransformPoint(LEFT_VEC);
 		Vector3 rightPosition = transform.TransformPoint(RIGHT_VEC);
 
 		float distance = Vector3.Distance(leftPosition, lastLeftPosition) + Vector3.Distance(rightPosition, lastRightPosition);
 
 		if (distance > MIN_DISTANCE) {
-			lastLeftPosition  = leftPosition;
+			lastLeftPosition = leftPosition;
 			lastRightPosition = rightPosition;
 
 			currentSegmentIndex = NextTailSegment(currentSegmentIndex);

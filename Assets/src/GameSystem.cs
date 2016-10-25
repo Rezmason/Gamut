@@ -32,11 +32,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	bool _paused = false;
-	/*
 	public bool paused {
 		get { return _paused; }
 	}
-	*/
 
 	public void Setup () {
 		colorSpaces = new List<ColorSpace>();

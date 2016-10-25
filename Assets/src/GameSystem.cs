@@ -7,8 +7,12 @@ public class GameSystem : Thingleton<GameSystem> {
 
 	GameObject objective;
 	GameObject swatch;
+	Text tScore;
+	Text tClock;
 	GameObject player;
 	GameObject ribbonHead;
+	uint score;
+	float timeRemaining;
 	bool _paused = true;
 	List<ColorSpace> colorSpaces;
 	int activeColorSpaceIndex;
@@ -32,6 +36,8 @@ public class GameSystem : Thingleton<GameSystem> {
 		activeColorSpace.active = true;
 
 		swatch = GameObject.FindWithTag("Swatch");
+		tScore = swatch.transform.Find("Score").gameObject.GetComponent<Text>();
+		tClock = swatch.transform.Find("Clock").gameObject.GetComponent<Text>();
 		player = GameObject.FindWithTag("Player");
 		ribbonHead = player.transform.Find("RibbonHead").gameObject;
 
@@ -41,6 +47,9 @@ public class GameSystem : Thingleton<GameSystem> {
 		objectiveBehavior.ribbonHead = ribbonHead;
 		objective.AddComponent<FaceCameraBehavior>();
 
+		score = 0;
+		ResetTime();
+		tScore.text = score.ToString();
 		SetCheckpoint();
 
 		/*
@@ -59,8 +68,22 @@ public class GameSystem : Thingleton<GameSystem> {
 		*/
 	}
 
+	public void Update() {
+		if (!_paused) {
+			timeRemaining = Mathf.Max(0, timeRemaining - Time.deltaTime);
+			tClock.text = timeRemaining.ToString("0.00");
+			if (timeRemaining == 0) {
+				TogglePaused();
+			}
+		}
+	}
+
+	void ResetTime() {
+		timeRemaining = 10 + 20 / (score * 0.1f + 1);
+		tClock.text = timeRemaining.ToString("0.00");
+	}
+
 	void SetCheckpoint() {
-		
 		objective.transform.position = activeColorSpace.GetRandomObjectivePosition();
 		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
@@ -68,7 +91,10 @@ public class GameSystem : Thingleton<GameSystem> {
 	}
 
 	void RespondToCollision() {
+		score++;
+		tScore.text = score.ToString();
 		SetCheckpoint();
+		ResetTime();
 	}
 
 	public bool TogglePaused()

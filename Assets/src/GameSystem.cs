@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class GameSystem : Thingleton<GameSystem> {
 
+	const float MIN_DISTANCE = 100;
 	GameObject objective;
 	GameObject swatch;
 	Text tScore;
@@ -45,7 +46,7 @@ public class GameSystem : Thingleton<GameSystem> {
 		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler = RespondToCollision;
 		objectiveBehavior.ribbonHead = ribbonHead;
-		objective.AddComponent<FaceCameraBehavior>();
+		objective.AddComponent<FaceCameraBehavior>().scaleMag = 900;
 
 		score = 0;
 		ResetTime();
@@ -84,7 +85,16 @@ public class GameSystem : Thingleton<GameSystem> {
 	}
 
 	void SetCheckpoint() {
-		objective.transform.position = activeColorSpace.GetRandomObjectivePosition();
+		Vector3 position = objective.transform.position;
+		Vector3 nextPosition = position;
+
+		uint count = 0;
+		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE) {
+			nextPosition = activeColorSpace.GetRandomObjectivePosition();
+			count++;
+		}
+
+		objective.transform.position = nextPosition;
 		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		swatch.GetComponent<Image>().color = color;

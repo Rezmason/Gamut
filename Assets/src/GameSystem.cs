@@ -11,7 +11,7 @@ public class GameSystem : Thingleton<GameSystem> {
 	Text tScore;
 	Text tClock;
 	GameObject player;
-	GameObject ribbonHead;
+	GameObject subject;
 	uint score;
 	float timeRemaining;
 	List<ColorSpace> colorSpaces;
@@ -51,12 +51,12 @@ public class GameSystem : Thingleton<GameSystem> {
 		tScore = swatch.transform.Find("Score").gameObject.GetComponent<Text>();
 		tClock = swatch.transform.Find("Clock").gameObject.GetComponent<Text>();
 		player = GameObject.FindWithTag("Player");
-		ribbonHead = player.transform.Find("RibbonHead").gameObject;
+		subject = player.transform.Find("Subject").gameObject;
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler = RespondToCollision;
-		objectiveBehavior.ribbonHead = ribbonHead;
+		objectiveBehavior.subject = subject;
 		objective.AddComponent<FaceCameraBehavior>().scaleMag = 900;
 
 		UpdateState();

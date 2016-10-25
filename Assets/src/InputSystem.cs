@@ -3,6 +3,7 @@ using System.Collections;
 
 public class InputSystem : Thingleton<InputSystem>, ISystem {
 
+	public event SimpleDelegate pauseGame;
 	const float SPEED_CHANGE_RATIO = 0.99f;
 	const float START_SPEED = 80;
 	const float MAX_SPEED = 150;
@@ -15,9 +16,7 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 	}
 
 	public void Update() {
-		if (Input.GetKeyDown("escape")) {
-			GameSystem.instance.TogglePaused();
-		}
+		if (Input.GetKeyDown("escape")) pauseGame();
 
 		if (GameSystem.instance.gameRunning) {
 			float delta = Time.deltaTime;

@@ -4,17 +4,8 @@ using System.Collections;
 using UnityEditor;
 
 public class MainMenuHandler : MonoBehaviour {
-	
-	public void StartGame() {
-		gameObject.SetActive(false);
-		GameSystem.instance.StartGame();
-	}
 
-	public void AboutGame() {
-		gameObject.SetActive(false);
-	}
-
-	public void QuitGame() {
-		Application.Quit();
-	}
+	public void StartGame() { MenuSystem.instance.StartGame(); }
+	public void AboutGame() { MenuSystem.instance.ShowAboutMenu(); }
+	public void QuitGame() { MenuSystem.instance.QuitGame(); }
 }

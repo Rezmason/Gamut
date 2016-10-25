@@ -18,6 +18,7 @@ public class Context
 		systems.Add(InputSystem.instance);
 		systems.Add(GameSystem.instance);
 		systems.Add(RibbonSystem.instance);
+		systems.Add(MenuSystem.instance);
 
 		foreach (ISystem system in systems) {
 			system.Setup();
@@ -25,6 +26,13 @@ public class Context
 		}
 
 		// TODO: inter-system event hookup
+		MenuSystem.instance.startGame += GameSystem.instance.StartGame;
+		MenuSystem.instance.resumeGame += GameSystem.instance.ResumeGame;
+		MenuSystem.instance.abortGame += GameSystem.instance.AbortGame;
+		MenuSystem.instance.quitGame += Application.Quit;
+		InputSystem.instance.pauseGame += GameSystem.instance.PauseGame;
+		InputSystem.instance.pauseGame += MenuSystem.instance.ShowPausedMenu;
+		GameSystem.instance.endGame += MenuSystem.instance.ShowGameOverMenu;
 
 		foreach (ISystem system in systems) {
 			system.Run();

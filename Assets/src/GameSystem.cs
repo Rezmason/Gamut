@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class GameSystem : Thingleton<GameSystem>, ISystem {
 
+	public event SimpleDelegate endGame;
 	const float MIN_DISTANCE = 200;
 	GameObject objective;
 	GameObject swatch;
@@ -11,7 +12,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	Text tClock;
 	GameObject player;
 	GameObject subject;
-	uint score;
+	GameObject hud;
+	uint _score;
+	public uint score { get { return _score; } }
 	float timeRemaining;
 	List<ColorSpace> colorSpaces;
 	int activeColorSpaceIndex;
@@ -44,9 +47,11 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		activeColorSpaceIndex = 0;
 		activeColorSpace.active = true;
 
-		swatch = GameObject.FindWithTag("Swatch");
-		tScore = swatch.transform.Find("Score").gameObject.GetComponent<Text>();
-		tClock = swatch.transform.Find("Clock").gameObject.GetComponent<Text>();
+		hud = GameObject.FindWithTag("GUI").transform.Find("HUD").gameObject;
+
+		swatch = hud.transform.Find("Swatch").gameObject;
+		tScore = hud.transform.Find("Score").gameObject.GetComponent<Text>();
+		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
 		player = GameObject.FindWithTag("Player");
 		subject = player.transform.Find("Subject").gameObject;
 
@@ -93,7 +98,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	void RespondToCollision() {
-		score++;
+		_score++;
 		tScore.text = score.ToString();
 		SetCheckpoint();
 		ResetTime();
@@ -103,7 +108,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		_started = true;
 		_paused = false;
 
-		score = 0;
+		_score = 0;
 		ResetTime();
 		tScore.text = score.ToString();
 		SetCheckpoint();
@@ -114,12 +119,24 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	void EndGame() {
 		_started = false;
 		UpdateState();
-		// TODO: show game over screen
+		endGame();
 	}
 
-	public void TogglePaused() {
+	public void AbortGame() {
+		_started = false;
+		UpdateState();
+	}
+
+	public void PauseGame() {
 		if (_started) {
-			_paused = !_paused;
+			_paused = true;
+			UpdateState();
+		}
+	}
+
+	public void ResumeGame() {
+		if (_started) {
+			_paused = false;
 			UpdateState();
 		}
 	}
@@ -128,8 +145,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		bool running = gameRunning;
 		Cursor.lockState = running ? CursorLockMode.Locked : CursorLockMode.None;
 		Cursor.visible = !running;
-		swatch.SetActive(running);
-		// TODO: toggle pause screen
+		hud.SetActive(running);
 	}
 
 	void TestColorSpace() {

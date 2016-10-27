@@ -92,6 +92,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 			nextPosition = activeColorSpace.GetRandomObjectivePosition();
 		}
 
+		objective.GetComponent<ObjectiveBehavior>().Reset();
 		objective.transform.position = nextPosition;
 		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
@@ -147,6 +148,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		bool running = gameRunning;
 		Cursor.lockState = running ? CursorLockMode.Locked : CursorLockMode.None;
 		Cursor.visible = !running;
+		objective.SetActive(running);
 		hud.SetActive(running);
 	}
 

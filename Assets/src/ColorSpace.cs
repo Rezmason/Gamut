@@ -3,6 +3,7 @@
 public abstract class ColorSpace
 {
 	protected GameObject _gameObject;
+	protected GameObject _origin;
 	public GameObject gameObject {
 		get { 
 			return _gameObject; 
@@ -26,16 +27,17 @@ public abstract class ColorSpace
 	private bool _active;
 	public bool active {
 		get { return _active; }
-		set { 
+		set {
 			_active = value;
 			_gameObject.SetActive(value);
-			Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _gameObject.transform.worldToLocalMatrix);
+			Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _origin.transform.worldToLocalMatrix);
 		}
 	}
 
 	protected void Init(GameObject gameObject, Material material, Vector3 whitePointPosition) {
 		_gameObject = gameObject;
 		_gameObject.SetActive(_active);
+		_origin = _gameObject.transform.Find("Origin").gameObject;
 		_material = material;
 		_whitePointPosition = whitePointPosition;
 	}

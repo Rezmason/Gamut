@@ -13,7 +13,7 @@ public class HSVCylinderColorSpace : ColorSpace
 
 	public override Color ColorFromWorldPosition(Vector3 worldPosition) {
 
-		Vector3 localPosition = _gameObject.transform.worldToLocalMatrix.MultiplyVector(worldPosition);
+		Vector3 localPosition = _origin.transform.worldToLocalMatrix.MultiplyVector(worldPosition);
 
 		float hue = Mathf.Atan2(-localPosition.x, -localPosition.z) / (2 * Mathf.PI) + 0.5f;
 		float sat = Mathf.Sqrt(localPosition.x * localPosition.x + localPosition.z * localPosition.z) * 2;

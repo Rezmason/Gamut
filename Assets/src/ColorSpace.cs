@@ -45,4 +45,9 @@ public abstract class ColorSpace
 	public abstract Color ColorFromWorldPosition(Vector3 position);
 
 	public abstract Vector3 GetRandomObjectivePosition();
+
+	public void Rotate(Vector3 eulerAngles) {
+		_origin.transform.Rotate(eulerAngles);
+		Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _origin.transform.worldToLocalMatrix);
+	}
 }

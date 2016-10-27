@@ -69,6 +69,10 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		if (gameRunning) {
 			timeRemaining = Mathf.Max(0, timeRemaining - Time.deltaTime);
 			tClock.text = timeRemaining.ToString("0.00");
+
+			activeColorSpace.Rotate(new Vector3(0, score * 0.01f, 0));
+			UpdateSpotColor();
+
 			if (timeRemaining == 0) {
 				EndGame();
 			}
@@ -77,6 +81,12 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	public void Run() {
 
+	}
+
+	void UpdateSpotColor() {
+		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
+		objective.GetComponent<MeshRenderer>().material.color = color;
+		swatch.GetComponent<Image>().color = color;
 	}
 
 	void ResetTime() {
@@ -94,9 +104,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 		objective.GetComponent<ObjectiveBehavior>().Reset();
 		objective.transform.position = nextPosition;
-		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
-		objective.GetComponent<MeshRenderer>().material.color = color;
-		swatch.GetComponent<Image>().color = color;
+		UpdateSpotColor();
 	}
 
 	void RespondToCollision() {

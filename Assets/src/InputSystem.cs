@@ -16,7 +16,8 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 	}
 
 	public void Update() {
-		if (Input.GetKeyDown("escape")) pauseGame();
+
+		if (GameSystem.instance.gameRunning && Input.GetKeyDown("escape")) pauseGame();
 
 		Camera cam = Camera.current;
 

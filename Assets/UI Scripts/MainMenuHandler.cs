@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-using UnityEditor;
-
 public class MainMenuHandler : MonoBehaviour {
 
 	public void StartGame() { MenuSystem.instance.StartGame(); }

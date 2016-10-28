@@ -32,3 +32,6 @@ ExportedObj/
 Icon?
 ehthumbs.db
 Thumbs.db
+*.zip
+gamut_webgl_deploy
+Run the Gamut.app

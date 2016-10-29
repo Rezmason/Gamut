@@ -14,6 +14,8 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	GameObject player;
 	GameObject subject;
 	GameObject hud;
+	GameObject scoreBurst;
+	ParticleSystem scoreParticles;
 	uint _score;
 	public uint score { get { return _score; } }
 	float timeRemaining;
@@ -62,6 +64,11 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		objectiveBehavior.subject = subject;
 		objective.AddComponent<FaceCameraBehavior>().scaleMag = 900;
 
+		scoreBurst = GameObject.Instantiate(Resources.Load("Prefabs/ScoreBurst") as GameObject);
+		scoreParticles = scoreBurst.GetComponent<ParticleSystem>();
+		scoreBurst.transform.position = subject.transform.position;
+		scoreParticles.Stop();
+
 		UpdateState();
 	}
 
@@ -109,6 +116,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	void RespondToCollision() {
 		_score++;
+		scoreBurst.transform.position = objective.transform.position;
+		scoreParticles.Clear();
+		scoreParticles.Play();
 		tScore.text = score.ToString();
 		SetCheckpoint();
 		ResetTime();

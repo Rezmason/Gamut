@@ -69,11 +69,14 @@
 			fixed4 frag (VertexOutput output) : SV_Target
 			{
 				float3 color = output.color;
-				// Edge data falls in range 1.0 to 2.0, so that meshes with no uv are rendered without edges.
 
+				// Edge data falls in range 1.0 to 2.0, so that meshes with no uv are rendered without edges.
 				if (output.edge.y >= 1.0) {
 					float edge = output.edge.y - 1.0;
-					color = lerp(color, fixed3(0.0, 0.0, 0.0), clamp((edge - 0.995) * 700.0, 0.0, 1.0));
+
+					color *= clamp(edge * 2 - 0.9, 0, 1);
+
+					//color = lerp(color, fixed3(0.0, 0.0, 0.0), clamp((edge - 0.995) * 700.0, 0.0, 1.0));
 					//color = lerp(color, fixed3(1.0, 1.0, 1.0), clamp((edge - 0.9) * 70.0, 0.0, 1.0));
 				}
 

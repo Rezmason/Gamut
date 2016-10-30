@@ -36,7 +36,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler += RespondToCollision;
 		objectiveBehavior.subject = subject;
-		objective.AddComponent<FaceCameraBehavior>().scaleMag = 900;
+		objective.AddComponent<FaceCameraBehavior>().scaleMag = 700;
 
 		scoreBurst = GameObject.Instantiate(Resources.Load("Prefabs/ScoreBurst") as GameObject);
 		scoreParticles = scoreBurst.GetComponent<ParticleSystem>();
@@ -92,7 +92,6 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 			nextPosition = state.activeColorSpace.GetRandomObjectivePosition();
 		}
 
-		objective.GetComponent<ObjectiveBehavior>().Reset();
 		objective.transform.position = nextPosition;
 		UpdateSpotColor();
 	}

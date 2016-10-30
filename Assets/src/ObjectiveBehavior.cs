@@ -3,22 +3,23 @@ using System.Collections;
 
 class ObjectiveBehavior : MonoBehaviour {
 
-	static float GOAL_ACCUM_PROXIMITY = 1.0f;
-	static float PROXIMITY_MAG = 0.005f;
+	const float CLOSE_ENOUGH_DISTANCE = 0.5f;
+	const float MIN_DISTANCE = 0.025f;
 	public event SimpleDelegate collisionHandler;
 	public GameObject subject;
-	float accumulatedProximity = 0;
-
+	float lastDistance = Mathf.Infinity;
 	void Update() {
 		Vector3 position = transform.worldToLocalMatrix.MultiplyPoint(subject.transform.position);
-		float proximity = PROXIMITY_MAG / position.magnitude;
-		accumulatedProximity = Mathf.Max(0, accumulatedProximity + proximity) * 0.9f;
-		if (accumulatedProximity > GOAL_ACCUM_PROXIMITY) {
-			collisionHandler();
-		}
-	}
+		float distance = position.magnitude;
 
-	public void Reset() {
-		accumulatedProximity = 0;
+		if (distance < MIN_DISTANCE) {
+			collisionHandler();
+			lastDistance = Mathf.Infinity;
+		} else if (lastDistance < distance && lastDistance < CLOSE_ENOUGH_DISTANCE) {
+			collisionHandler();
+			lastDistance = Mathf.Infinity;
+		} else {
+			lastDistance = distance;
+		}
 	}
 }

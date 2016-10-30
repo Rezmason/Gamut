@@ -16,40 +16,14 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	GameObject hud;
 	GameObject scoreBurst;
 	ParticleSystem scoreParticles;
-	uint _score;
-	public uint score { get { return _score; } }
 	float timeRemaining;
-	List<ColorSpace> colorSpaces;
-	int activeColorSpaceIndex;
 
-	public ColorSpace activeColorSpace { 
-		get { 
-			return colorSpaces[activeColorSpaceIndex];
-		} 
-	}
-
-	public bool gameRunning {
-		get { return _started && !_paused; }
-	}
-
-	bool _started = false;
-	public bool started {
-		get { return _started; }
-	}
-
-	bool _paused = false;
-	public bool paused {
-		get { return _paused; }
-	}
+	GameState state;
 
 	public void Setup () {
-		colorSpaces = new List<ColorSpace>();
-		colorSpaces.Add(new HSVCylinderColorSpace());
-		colorSpaces.Add(new RGBCubeColorSpace());
 
-		activeColorSpaceIndex = 0;
-		activeColorSpace.active = true;
-
+		state = GameState.instance;
+		SetupColorSpaces();
 		hud = GameObject.FindWithTag("GUI").transform.Find("HUD").gameObject;
 
 		swatch = hud.transform.Find("Swatch").gameObject;
@@ -73,11 +47,11 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	public void Update() {
-		if (gameRunning) {
+		if (state.gameRunning) {
 			timeRemaining = Mathf.Max(0, timeRemaining - Time.deltaTime);
 			tClock.text = timeRemaining.ToString("0.00");
 
-			activeColorSpace.Rotate(new Vector3(0, score * 0.01f, 0));
+			state.activeColorSpace.Rotate(new Vector3(0, state.score * 0.01f, 0));
 			UpdateSpotColor();
 
 			if (timeRemaining == 0) {
@@ -90,14 +64,23 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	}
 
+	void SetupColorSpaces() {
+		List<ColorSpace> colorSpaces = new List<ColorSpace>();
+		colorSpaces.Add(new HSVCylinderColorSpace());
+		colorSpaces.Add(new RGBCubeColorSpace());
+		state.SetColorSpaces(colorSpaces);
+		state.SetActiveColorSpaceIndex(0);
+		state.activeColorSpace.active = true;
+	}
+
 	void UpdateSpotColor() {
-		Color color = activeColorSpace.ColorFromWorldPosition(objective.transform.position);
+		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		swatch.GetComponent<Image>().color = color;
 	}
 
 	void ResetTime() {
-		timeRemaining = 10 + 20 / (score * 0.1f + 1);
+		timeRemaining = 10 + 20 / (state.score * 0.1f + 1);
 		tClock.text = timeRemaining.ToString("0.00");
 	}
 
@@ -106,7 +89,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		Vector3 nextPosition = position;
 
 		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE) {
-			nextPosition = activeColorSpace.GetRandomObjectivePosition();
+			nextPosition = state.activeColorSpace.GetRandomObjectivePosition();
 		}
 
 		objective.GetComponent<ObjectiveBehavior>().Reset();
@@ -115,22 +98,22 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	void RespondToCollision() {
-		_score++;
+		state.SetScore(state.score + 1);
 		scoreBurst.transform.position = objective.transform.position;
 		scoreParticles.Clear();
 		scoreParticles.Play();
-		tScore.text = score.ToString();
+		tScore.text = state.score.ToString();
 		SetCheckpoint();
 		ResetTime();
 	}
 
 	public void StartGame() {
-		_started = true;
-		_paused = false;
+		state.SetStarted(true);
+		state.SetPaused(false);
 
-		_score = 0;
+		state.SetScore(0);
 		ResetTime();
-		tScore.text = score.ToString();
+		tScore.text = state.score.ToString();
 		SetCheckpoint();
 
 		UpdateState();
@@ -138,32 +121,32 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	void EndGame() {
-		_started = false;
+		state.SetStarted(false);
 		UpdateState();
 		endGame();
 	}
 
 	public void AbortGame() {
-		_started = false;
+		state.SetStarted(false);
 		UpdateState();
 	}
 
 	public void PauseGame() {
-		if (_started) {
-			_paused = true;
+		if (state.started) {
+			state.SetPaused(true);
 			UpdateState();
 		}
 	}
 
 	public void ResumeGame() {
-		if (_started) {
-			_paused = false;
+		if (state.started) {
+			state.SetPaused(false);
 			UpdateState();
 		}
 	}
 
 	public void UpdateState() {
-		bool running = gameRunning;
+		bool running = state.gameRunning;
 		Cursor.lockState = running ? CursorLockMode.Locked : CursorLockMode.None;
 		Cursor.visible = !running;
 		objective.SetActive(running);
@@ -181,7 +164,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 			GameObject copy = GameObject.Instantiate(objective);
 			copy.transform.position = pos;
 			copy.transform.localScale = Vector3.one * 10;
-			copy.GetComponent<MeshRenderer>().material.color = activeColorSpace.ColorFromWorldPosition(pos);
+			copy.GetComponent<MeshRenderer>().material.color = state.activeColorSpace.ColorFromWorldPosition(pos);
 		}
 	}
 }

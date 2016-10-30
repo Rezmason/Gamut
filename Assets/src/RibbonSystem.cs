@@ -32,9 +32,10 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 	readonly Vector3 LEFT_VEC = new Vector3(-RIBBON_SCALE, 0, -RIBBON_SCALE);
 	readonly Vector3 MIDDLE_VEC = new Vector3(0, 0, -RIBBON_SCALE);
 	readonly Vector3 RIGHT_VEC = new Vector3(RIBBON_SCALE, 0, -RIBBON_SCALE);
-
+	GameState state;
 
 	public void Setup() {
+		state = GameState.instance;
 
 		player = GameObject.FindWithTag("Player");
 		head = player.transform.Find("RibbonHead").gameObject;
@@ -42,7 +43,7 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
 		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
 
-		Material colorSpaceMaterial = GameSystem.instance.activeColorSpace.material;
+		Material colorSpaceMaterial = state.activeColorSpace.material;
 
 		head.GetComponent<MeshRenderer>().material = colorSpaceMaterial;
 
@@ -87,7 +88,7 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 	}
 
 	public void Update () {
-		if (!GameSystem.instance.gameRunning) {
+		if (!state.gameRunning) {
 			head.SetActive(false);
 			tail.SetActive(false);
 			return;

@@ -15,8 +15,10 @@ public class Context
 
 		List<ISystem> systems = new List<ISystem>();
 
-		systems.Add(InputSystem.instance);
+		GameState gameState = GameState.instance;
+
 		systems.Add(GameSystem.instance);
+		systems.Add(InputSystem.instance);
 		systems.Add(RibbonSystem.instance);
 		systems.Add(MenuSystem.instance);
 

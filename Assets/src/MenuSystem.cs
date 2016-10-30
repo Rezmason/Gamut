@@ -41,6 +41,11 @@ public class MenuSystem : Thingleton<MenuSystem>, ISystem {
 		if (startGame != null) startGame();
 	}
 
+	public void AbortGame() {
+		if (abortGame != null) abortGame();
+		ShowMainMenu();
+	}
+
 	public void ShowAboutMenu() {
 		HideMenus();
 		aboutMenu.SetActive(true);

@@ -10,18 +10,20 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 	Vector3 eulerAngles = new Vector3();
 	float speed = START_SPEED;
 	GameObject player;
+	GameState state;
 
 	public void Setup() {
 		player = GameObject.FindWithTag("Player");
+		state = GameState.instance;
 	}
 
 	public void Update() {
 
-		if (GameSystem.instance.gameRunning && Input.GetKeyDown("escape")) pauseGame();
+		if (state.gameRunning && Input.GetKeyDown("escape")) pauseGame();
 
 		Camera cam = Camera.current;
 
-		if (GameSystem.instance.gameRunning) {
+		if (state.gameRunning) {
 			float delta = Time.deltaTime;
 			speed = speed * SPEED_CHANGE_RATIO + (Input.GetKey("space") ? MAX_SPEED : START_SPEED) * (1 - SPEED_CHANGE_RATIO);
 			player.transform.position += player.transform.forward * delta * speed;
@@ -39,7 +41,7 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 			eulerAngles *= 0.95f;
 			player.transform.Rotate(eulerAngles * delta);
 		} else if (cam != null) {
-			if (GameSystem.instance.paused) {
+			if (GameState.instance.paused) {
 				cam.transform.Rotate(0, 0, 0.2f);
 			} else {
 				cam.fieldOfView = cam.fieldOfView * SPEED_CHANGE_RATIO + 150 * (1 - SPEED_CHANGE_RATIO);

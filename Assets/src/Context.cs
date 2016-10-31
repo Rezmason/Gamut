@@ -8,7 +8,7 @@ public class Context
 	{
 		// Build scene
 		GameObject.Instantiate(Resources.Load("Prefabs/EventSystem"));
-		GameObject.Instantiate(Resources.Load("Prefabs/GUI"));
+		GameObject.Instantiate(Resources.Load("Prefabs/Menus"));
 		GameObject.Instantiate(Resources.Load("Prefabs/Player"));
 
 		Updater updater = gameObject.AddComponent<Updater>();

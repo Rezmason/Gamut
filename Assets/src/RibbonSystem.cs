@@ -122,7 +122,7 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		lastPosition = position;
 
 		float dash = Mathf.Sin(totalDistanceTraveled * 0.13f) * 0.5f + 1.5f + (speed - 50) * 0.003f;
-		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 3f;
+		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 10f;
 		/*
 		for (int i = 0; i < headMesh.vertexCount; i++) {
 			headEdgeUV2s[i].y = dash;

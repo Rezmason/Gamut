@@ -12,7 +12,6 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	Text tScore;
 	Text tClock;
 	GameObject player;
-	GameObject subject;
 	GameObject hud;
 	GameObject scoreBurst;
 	ObjectiveBehavior objectiveBehavior;
@@ -26,23 +25,22 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 		state = GameState.instance;
 		SetupColorSpaces();
-		hud = GameObject.FindWithTag("GUI").transform.Find("HUD").gameObject;
 
+		player = GameObject.FindWithTag("Player");
+		hud = player.transform.Find("MainCamera/HUD").gameObject;
 		loupe = hud.transform.Find("Loupe").gameObject;
 		tScore = hud.transform.Find("Score").gameObject.GetComponent<Text>();
 		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
-		player = GameObject.FindWithTag("Player");
-		subject = player.transform.Find("Subject").gameObject;
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler += RespondToCollision;
-		objectiveBehavior.subject = subject;
+		objectiveBehavior.subject = player;
 		objective.AddComponent<FaceCameraBehavior>().scaleMag = 700;
 
 		scoreBurst = GameObject.Instantiate(Resources.Load("Prefabs/ScoreBurst") as GameObject);
 		scoreParticles = scoreBurst.GetComponent<ParticleSystem>();
-		scoreBurst.transform.position = subject.transform.position;
+		scoreBurst.transform.position = player.transform.position;
 		scoreParticles.Stop();
 
 		UpdateState();

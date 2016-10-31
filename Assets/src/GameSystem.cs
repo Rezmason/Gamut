@@ -49,7 +49,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	public void Update() {
 		if (state.gameRunning) {
 			timeRemaining = Mathf.Max(0, timeRemaining - Time.deltaTime);
-			tClock.text = timeRemaining.ToString("0.00");
+			tClock.text = timeRemaining.ToString("00.0");
 
 			state.activeColorSpace.Rotate(new Vector3(0, state.score * 0.01f, 0));
 			UpdateSpotColor();
@@ -83,7 +83,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	void ResetTime() {
 		timeRemaining = 10 + 20 / (state.score * 0.1f + 1);
-		tClock.text = timeRemaining.ToString("0.00");
+		tClock.text = timeRemaining.ToString("00.0");
 	}
 
 	void SetCheckpoint() {
@@ -103,7 +103,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		scoreBurst.transform.position = objective.transform.position;
 		scoreParticles.Clear();
 		scoreParticles.Play();
-		tScore.text = state.score.ToString();
+		tScore.text = state.score.ToString("000");
 		SetCheckpoint();
 		ResetTime();
 	}
@@ -115,7 +115,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		state.SetScore(0);
 		ResetTime();
 		loupeRotationVelocity = 0;
-		tScore.text = state.score.ToString();
+		tScore.text = state.score.ToString("000");
 		SetCheckpoint();
 
 		UpdateState();

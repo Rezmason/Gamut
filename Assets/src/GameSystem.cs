@@ -8,15 +8,17 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	public event SimpleDelegate startGame;
 	const float MIN_DISTANCE = 200;
 	GameObject objective;
-	GameObject swatch;
+	GameObject loupe;
 	Text tScore;
 	Text tClock;
 	GameObject player;
 	GameObject subject;
 	GameObject hud;
 	GameObject scoreBurst;
+	ObjectiveBehavior objectiveBehavior;
 	ParticleSystem scoreParticles;
 	float timeRemaining;
+	float loupeRotationVelocity;
 
 	GameState state;
 
@@ -26,14 +28,14 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		SetupColorSpaces();
 		hud = GameObject.FindWithTag("GUI").transform.Find("HUD").gameObject;
 
-		swatch = hud.transform.Find("Swatch").gameObject;
+		loupe = hud.transform.Find("Loupe").gameObject;
 		tScore = hud.transform.Find("Score").gameObject.GetComponent<Text>();
 		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
 		player = GameObject.FindWithTag("Player");
 		subject = player.transform.Find("Subject").gameObject;
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
-		ObjectiveBehavior objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
+		objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
 		objectiveBehavior.collisionHandler += RespondToCollision;
 		objectiveBehavior.subject = subject;
 		objective.AddComponent<FaceCameraBehavior>().scaleMag = 700;
@@ -76,7 +78,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	void UpdateSpotColor() {
 		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
-		swatch.GetComponent<Image>().color = color;
+		loupe.GetComponent<Image>().color = color;
+		loupeRotationVelocity = Mathf.Lerp(loupeRotationVelocity, 5f / (0.25f * objectiveBehavior.lastDistance + 1), 0.01f);
+		loupe.transform.Rotate(new Vector3(0, 0, loupeRotationVelocity));
 	}
 
 	void ResetTime() {
@@ -112,6 +116,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 		state.SetScore(0);
 		ResetTime();
+		loupeRotationVelocity = 0;
 		tScore.text = state.score.ToString();
 		SetCheckpoint();
 

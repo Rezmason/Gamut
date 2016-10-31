@@ -21,5 +21,10 @@ public class GameState : Thingleton<GameState> {
 	int activeColorSpaceIndex;
 	public void SetActiveColorSpaceIndex(int value) { activeColorSpaceIndex = value; }
 	public ColorSpace activeColorSpace { get { return colorSpaces[activeColorSpaceIndex]; } }
+
+	float _speed = 0;
+	public float speed { get { return _speed; } }
+	public void SetSpeed(float value) { _speed = value; }
+
 }
 

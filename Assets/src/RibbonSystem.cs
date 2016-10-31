@@ -5,16 +5,17 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 	GameObject player;
 	GameObject tail;
-	public GameObject head;
+	GameObject camera;
+	//public GameObject head;
 
 	Mesh tailMesh;
-	Mesh headMesh;
+	//Mesh headMesh;
 
 	Vector3[] tailVertices;
 	Vector2[] tailEdgeUV2s;
 	int[] tailIndices;
 
-	Vector2[] headEdgeUV2s;
+	//Vector2[] headEdgeUV2s;
 
 	int currentSegmentIndex;
 
@@ -38,14 +39,15 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		state = GameState.instance;
 
 		player = GameObject.FindWithTag("Player");
-		head = player.transform.Find("RibbonHead").gameObject;
+		camera = player.transform.Find("MainCamera").gameObject;
+		//head = player.transform.Find("RibbonHead").gameObject;
 
-		head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
-		head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
+		//head.transform.localScale = new Vector3(RIBBON_SCALE, RIBBON_SCALE, RIBBON_SCALE);
+		//head.transform.localPosition = new Vector3(0, 0, -RIBBON_SCALE);
 
 		Material colorSpaceMaterial = state.activeColorSpace.material;
 
-		head.GetComponent<MeshRenderer>().material = colorSpaceMaterial;
+		//head.GetComponent<MeshRenderer>().material = colorSpaceMaterial;
 
 		tail = new GameObject();
 		tail.AddComponent<MeshRenderer>().material = colorSpaceMaterial;
@@ -53,12 +55,12 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		tailMesh = new Mesh();
 		tailMeshFilter.mesh = tailMesh;
 
-		headMesh = head.GetComponent<MeshFilter>().mesh;
+		//headMesh = head.GetComponent<MeshFilter>().mesh;
 
 		tailVertices = new Vector3[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
 		tailEdgeUV2s = new Vector2[VERT_STRIDE * (1 + TOTAL_TAIL_SEGMENTS)];
 		tailIndices = new int[INDEX_STRIDE * TOTAL_TAIL_SEGMENTS];
-		headEdgeUV2s = headMesh.uv;
+		//headEdgeUV2s = headMesh.uv;
 
 		for (int i = 0; i < (1 + TOTAL_TAIL_SEGMENTS); i++) {
 			tailEdgeUV2s[i * VERT_STRIDE + 0].x = 2;
@@ -89,15 +91,15 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 	public void Update () {
 		if (!state.gameRunning) {
-			head.SetActive(false);
+			//head.SetActive(false);
 			tail.SetActive(false);
 			return;
 		}
 
-		head.SetActive(true);
+		//head.SetActive(true);
 		tail.SetActive(true);
 
-		Transform transform = player.transform;
+		Transform transform = camera.transform;
 
 		Vector3 leftPosition = transform.TransformPoint(LEFT_VEC);
 		Vector3 rightPosition = transform.TransformPoint(RIGHT_VEC);
@@ -121,11 +123,12 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 		float dash = Mathf.Sin(totalDistanceTraveled * 0.13f) * 0.5f + 1.5f + (speed - 50) * 0.003f;
 		float swoop = Mathf.Sin(totalDistanceTraveled * 0.06f) * 3f;
-
+		/*
 		for (int i = 0; i < headMesh.vertexCount; i++) {
 			headEdgeUV2s[i].y = dash;
 		}
 		head.transform.localPosition = new Vector3(0, swoop, -RIBBON_SCALE);
+		*/
 
 		PositionTailSegment(currentSegmentIndex, dash, swoop);
 		UpdateTailMesh();
@@ -136,7 +139,7 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 	}
 
 	void PositionTailSegment(int index, float dash = 0, float swoop = 0) {
-		Transform transform = player.transform;
+		Transform transform = camera.transform;
 		tailVertices[index * VERT_STRIDE + 1] = tail.transform.InverseTransformPoint(transform.TransformPoint(MIDDLE_VEC) + transform.up * swoop);
 		tailVertices[index * VERT_STRIDE + 0] = tail.transform.InverseTransformPoint(transform.TransformPoint(  LEFT_VEC) + transform.up * swoop);
 		tailVertices[index * VERT_STRIDE + 2] = tail.transform.InverseTransformPoint(transform.TransformPoint( RIGHT_VEC) + transform.up * swoop);
@@ -178,6 +181,6 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 		tailMesh.triangles = tailIndices;
 		tailMesh.RecalculateBounds();
 
-		headMesh.uv2 = headEdgeUV2s;
+		//headMesh.uv2 = headEdgeUV2s;
 	}
 }

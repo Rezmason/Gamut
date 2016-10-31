@@ -7,19 +7,20 @@ class ObjectiveBehavior : MonoBehaviour {
 	const float MIN_DISTANCE = 0.025f;
 	public event SimpleDelegate collisionHandler;
 	public GameObject subject;
-	float lastDistance = Mathf.Infinity;
+	float _lastDistance = Mathf.Infinity;
+	public float lastDistance { get { return _lastDistance; } }
 	void Update() {
 		Vector3 position = transform.worldToLocalMatrix.MultiplyPoint(subject.transform.position);
 		float distance = position.magnitude;
 
 		if (distance < MIN_DISTANCE) {
 			collisionHandler();
-			lastDistance = Mathf.Infinity;
-		} else if (lastDistance < distance && lastDistance < CLOSE_ENOUGH_DISTANCE) {
+			_lastDistance = Mathf.Infinity;
+		} else if (_lastDistance < distance && _lastDistance < CLOSE_ENOUGH_DISTANCE) {
 			collisionHandler();
-			lastDistance = Mathf.Infinity;
+			_lastDistance = Mathf.Infinity;
 		} else {
-			lastDistance = distance;
+			_lastDistance = distance;
 		}
 	}
 }

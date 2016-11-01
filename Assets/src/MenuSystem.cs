@@ -28,13 +28,11 @@ public class MenuSystem : Thingleton<MenuSystem>, ISystem {
 		menus.Add(pausedMenu);
 		menus.Add(aboutMenu);
 		menus.Add(gameOverMenu);
-
-		ShowMainMenu();
 	}
 
 	public void Update() {}
 
-	public void Run() {}
+	public void Run() { ShowMainMenu(); }
 
 	public void StartGame() { 
 		HideMenus();

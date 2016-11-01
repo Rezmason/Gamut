@@ -25,8 +25,8 @@ public class RibbonSystem : Thingleton<RibbonSystem>, ISystem {
 
 	float totalDistanceTraveled;
 
-	const float RIBBON_SCALE = 6f;
-	const int TOTAL_TAIL_SEGMENTS = 10000;
+	const float RIBBON_SCALE = 10f;
+	const int TOTAL_TAIL_SEGMENTS = 4000;
 	const int VERT_STRIDE = 3;
 	const int INDEX_STRIDE = 3 * 4;
 	const float MIN_DISTANCE = 3;

@@ -22,7 +22,7 @@ GameObject:
   - 198: {fileID: 198000011616849922}
   - 199: {fileID: 199000010933488698}
   m_Layer: 0
-  m_Name: Mesh Particles
+  m_Name: MeshParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -54,7 +54,7 @@ GameObject:
   - 198: {fileID: 198000014124857276}
   - 199: {fileID: 199000010177724716}
   m_Layer: 0
-  m_Name: Free Particles
+  m_Name: FreeParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1938,7 +1938,7 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000010670583032}
   serializedVersion: 4
-  lengthInSec: 5
+  lengthInSec: 1
   startDelay:
     scalar: 0
     maxCurve:
@@ -1986,7 +1986,7 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     startLifetime:
-      scalar: 15
+      scalar: 5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2002,7 +2002,7 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 0.33333334
+          value: 0.4
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -2011,7 +2011,7 @@ ParticleSystem:
         m_RotationOrder: 0
       minMaxState: 3
     startSpeed:
-      scalar: 0.001
+      scalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:

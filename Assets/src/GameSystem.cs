@@ -77,7 +77,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		loupe.GetComponent<Image>().color = color;
-		loupeRotationVelocity = Mathf.Lerp(loupeRotationVelocity, 5f / (0.25f * objectiveBehavior.lastDistance + 1), 0.01f);
+		loupeRotationVelocity = Mathf.Lerp(loupeRotationVelocity, 3f / (0.25f * objectiveBehavior.lastDistance + 1), 0.01f);
 		loupe.transform.Rotate(new Vector3(0, 0, loupeRotationVelocity));
 	}
 
@@ -90,11 +90,28 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		Vector3 position = objective.transform.position;
 		Vector3 nextPosition = position;
 
-		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE) {
-			nextPosition = state.activeColorSpace.GetRandomObjectivePosition();
+		float interp = Mathf.Min(1, 1 - 1 / (state.score * 0.1f + 1));
+
+		Vector3 easyPosition = player.transform.position;
+		float easyAngle = Random.value * Mathf.PI * 2;
+		easyPosition += player.transform.forward * MIN_DISTANCE;
+		easyPosition += player.transform.right * 80 * Mathf.Cos(easyAngle);
+		easyPosition += player.transform.up    * 80 * Mathf.Sin(easyAngle);
+
+		int dammit = 20;
+		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE || dammit == 0) {
+			nextPosition = Vector3.Lerp(easyPosition, state.activeColorSpace.GetRandomObjectivePosition(), interp);
+			dammit--;
+		}
+
+		if (dammit == 0) {
+			Debug.Log("Damn it!");
+			Debug.Log(player.transform.position);
 		}
 
 		objective.transform.position = nextPosition;
+		objective.GetComponent<FaceCameraBehavior>().baseScale = 10 + 100 / (state.score + 1);
+		UpdateParticleSize();
 		UpdateSpotColor();
 	}
 
@@ -153,6 +170,11 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		Cursor.visible = !running;
 		objective.SetActive(running);
 		hud.SetActive(running);
+		UpdateParticleSize(true);
+	}
+
+	void UpdateParticleSize(bool forceCurrentParticles = false) {
+		state.activeColorSpace.SetParticleSize(state.gameRunning ? 0.01f * (1 - 1 / (state.score + 1.1f)) : 0.01f, forceCurrentParticles);
 	}
 
 	void TestColorSpace() {

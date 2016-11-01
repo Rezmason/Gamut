@@ -3,12 +3,14 @@
 public abstract class ColorSpace
 {
 	protected GameObject _gameObject;
-	protected GameObject _origin;
 	public GameObject gameObject {
 		get { 
 			return _gameObject; 
 		}
 	}
+	protected GameObject _origin;
+	protected ParticleSystem _particleSystem;
+	protected ParticleSystem.Particle[] _particles;
 
 	protected Material _material;
 	public Material material {
@@ -39,6 +41,8 @@ public abstract class ColorSpace
 		_gameObject.SetActive(_active);
 		_origin = _gameObject.transform.Find("Origin").gameObject;
 		_material = material;
+		_particleSystem = _gameObject.transform.Find("FreeParticles").gameObject.GetComponent<ParticleSystem>();
+		_particles = new ParticleSystem.Particle[_particleSystem.maxParticles];
 		_whitePointPosition = whitePointPosition;
 	}
 
@@ -49,5 +53,18 @@ public abstract class ColorSpace
 	public void Rotate(Vector3 eulerAngles) {
 		_origin.transform.Rotate(eulerAngles);
 		Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _origin.transform.worldToLocalMatrix);
+	}
+
+	public void SetParticleSize(float size, bool forceCurrentParticles) {
+		_particleSystem.startSize = size;
+		if (forceCurrentParticles) {
+			int len = _particleSystem.GetParticles(_particles);
+
+			for (int i = 0; i < len; i++) {
+				_particles[i].startSize = size;
+			}
+
+			_particleSystem.SetParticles(_particles, len);
+		}
 	}
 }

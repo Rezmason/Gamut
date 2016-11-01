@@ -25,8 +25,8 @@ public class HSVCylinderColorSpace : ColorSpace
 	public override Vector3 GetRandomObjectivePosition()
 	{
 		float angle = Random.value * Mathf.PI * 2; // Random hue
-		float mag = (1 - Mathf.Pow(Random.value, 2)) * 500; // Bias towards more saturated colors
-		float val = (1 - Mathf.Pow(Random.value, 2)); // Bias towards brighter colors
+		float mag = (1 - Mathf.Pow(Random.value, 1.75f)) * 500; // Bias towards more saturated colors
+		float val = (1 - Mathf.Pow(Random.value, 1.5f)); // Bias towards brighter colors
 
 		// Hey, nobody's impartial!
 

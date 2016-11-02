@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 public class GameState : Thingleton<GameState> {
-	uint _score;
-	public uint score { get { return _score; } }
-	public void SetScore (uint value) { _score = value; }
+	int _score;
+	public int score { get { return _score; } }
+	public void SetScore (int value) { _score = value; }
 
 	bool _started = false;
 	public bool started { get { return _started; } }

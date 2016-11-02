@@ -18,7 +18,7 @@ Material:
     - first:
         name: _BrightnessTexture
       second:
-        m_Texture: {fileID: 2800000, guid: 80f10103740a64100818118972793df4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 70ecd8d881d9b447ba0b7f8d6b4177f1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - first:

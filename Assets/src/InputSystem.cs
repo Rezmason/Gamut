@@ -48,7 +48,7 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 			if (GameState.instance.paused) {
 				cam.transform.Rotate(0, 0, 0.2f);
 			} else {
-				cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, 150, FOV_DECREASE_RATIO);
+				cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, 100, FOV_DECREASE_RATIO);
 				cam.transform.Rotate(0.3f, 0, 0);
 			}
 		}

@@ -8,16 +8,19 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	public event SimpleDelegate startGame;
 	const float MIN_DISTANCE = 200;
 	GameObject objective;
-	GameObject loupe;
+	GameObject nib;
+	Vector3 nibStartPosition;
+	Vector3 nibStartAngles;
 	Text tScore;
 	Text tClock;
+	Text tHelp;
 	GameObject player;
 	GameObject hud;
 	GameObject scoreBurst;
 	ObjectiveBehavior objectiveBehavior;
 	ParticleSystem scoreParticles;
 	float timeRemaining;
-	float loupeRotationVelocity;
+	float time;
 
 	GameState state;
 
@@ -27,10 +30,15 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		SetupColorSpaces();
 
 		player = GameObject.FindWithTag("Player");
-		hud = player.transform.Find("MainCamera/HUD").gameObject;
-		loupe = hud.transform.Find("Loupe").gameObject;
+		nib = player.transform.Find("MainCamera/Nib").gameObject;
+		nibStartPosition = nib.transform.localPosition;
+		nibStartAngles = nib.transform.localEulerAngles;
+		hud = nib.transform.Find("HUD").gameObject;
 		tScore = hud.transform.Find("Score").gameObject.GetComponent<Text>();
 		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
+		tHelp = hud.transform.Find("HelpText").gameObject.GetComponent<Text>();
+
+		tHelp.text = "HELLO";
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
@@ -53,7 +61,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 			state.activeColorSpace.Rotate(new Vector3(0, state.score * 0.01f, 0));
 			UpdateSpotColor();
-
+			UpdateNib();
 			if (timeRemaining == 0) {
 				EndGame();
 			}
@@ -76,9 +84,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	void UpdateSpotColor() {
 		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
-		loupe.GetComponent<Image>().color = color;
-		loupeRotationVelocity = Mathf.Lerp(loupeRotationVelocity, 3f / (0.25f * objectiveBehavior.lastDistance + 1), 0.01f);
-		loupe.transform.Rotate(new Vector3(0, 0, loupeRotationVelocity));
+		nib.GetComponent<Renderer>().material.color = color;
 	}
 
 	void ResetTime() {
@@ -98,15 +104,10 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		easyPosition += player.transform.right * 80 * Mathf.Cos(easyAngle);
 		easyPosition += player.transform.up    * 80 * Mathf.Sin(easyAngle);
 
-		int dammit = 20;
-		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE || dammit == 0) {
+		int triesLeft = 20;
+		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE && triesLeft != 0) {
 			nextPosition = Vector3.Lerp(easyPosition, state.activeColorSpace.GetRandomObjectivePosition(), interp);
-			dammit--;
-		}
-
-		if (dammit == 0) {
-			Debug.Log("Damn it!");
-			Debug.Log(player.transform.position);
+			triesLeft--;
 		}
 
 		objective.transform.position = nextPosition;
@@ -126,12 +127,15 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	public void StartGame() {
+		time = 0;
 		state.SetStarted(true);
 		state.SetPaused(false);
 
+		player.transform.position = Vector3.back * MIN_DISTANCE;
+		player.transform.LookAt(Vector3.zero);
+		state.activeColorSpace.Reset();
 		state.SetScore(0);
 		ResetTime();
-		loupeRotationVelocity = 0;
 		tScore.text = state.score.ToString("000");
 		SetCheckpoint();
 
@@ -170,11 +174,23 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		Cursor.visible = !running;
 		objective.SetActive(running);
 		hud.SetActive(running);
+		nib.SetActive(running);
 		UpdateParticleSize(true);
 	}
 
 	void UpdateParticleSize(bool forceCurrentParticles = false) {
 		state.activeColorSpace.SetParticleSize(state.gameRunning ? 0.01f * (1 - 1 / (state.score + 1.1f)) : 0.01f, forceCurrentParticles);
+	}
+
+	void UpdateNib() {
+		Vector3 position = nibStartPosition;
+		time += Time.deltaTime * state.speed;
+		position.y += Mathf.Sin(time * 0.1f) * 2 * state.speed / 100;
+		nib.transform.localPosition = position;
+
+		Vector3 angles = nibStartAngles;
+		angles.x -= Mathf.Cos(time * 0.1f) * 2 * state.speed / 100;
+		nib.transform.localEulerAngles = angles;
 	}
 
 	void TestColorSpace() {

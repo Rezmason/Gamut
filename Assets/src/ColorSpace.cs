@@ -55,6 +55,10 @@ public abstract class ColorSpace
 		Shader.SetGlobalMatrix("_InvertedColorSpaceTransform", _origin.transform.worldToLocalMatrix);
 	}
 
+	public void Reset() {
+		_origin.transform.eulerAngles = Vector3.forward;
+	}
+
 	public void SetParticleSize(float size, bool forceCurrentParticles) {
 		_particleSystem.startSize = size;
 		if (forceCurrentParticles) {

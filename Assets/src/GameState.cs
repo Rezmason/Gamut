@@ -26,5 +26,8 @@ public class GameState : Thingleton<GameState> {
 	public float speed { get { return _speed; } }
 	public void SetSpeed(float value) { _speed = value; }
 
+	Vector3 _eulerAngles = new Vector3();
+	public Vector3 eulerAngles { get { return _eulerAngles; } }
+	public void SetEulerAngles(Vector3 value) { _eulerAngles = value; }
 }
 

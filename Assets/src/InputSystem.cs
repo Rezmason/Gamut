@@ -9,7 +9,6 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 	const float FOV_DECREASE_RATIO = 0.01f;
 	const float START_SPEED = 80;
 	const float MAX_SPEED = 140;
-	Vector3 eulerAngles = new Vector3();
 	GameObject player;
 	GameState state;
 
@@ -36,14 +35,15 @@ public class InputSystem : Thingleton<InputSystem>, ISystem {
 				cam.transform.localRotation = Quaternion.Lerp(cam.transform.localRotation, Quaternion.identity, 0.1f);
 			}
 
+			Vector3 eulerAngles = state.eulerAngles;
 			eulerAngles += new Vector3(
 				-Input.GetAxis("Mouse Y") * 20, 
-				Input.GetAxis("Mouse X") * 50, 
-				Input.GetAxis("Mouse X") * -30 + state.speed * 0.01f
+				Input.GetAxis("Mouse X") * 10, 
+				Input.GetAxis("Mouse X") * -(10 + state.speed * 0.01f)
 			);
-
 			eulerAngles *= 0.95f;
 			player.transform.Rotate(eulerAngles * delta);
+			state.SetEulerAngles(eulerAngles);
 		} else if (cam != null) {
 			if (GameState.instance.paused) {
 				cam.transform.Rotate(0, 0, 0.2f);

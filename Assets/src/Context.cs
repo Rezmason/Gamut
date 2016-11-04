@@ -19,7 +19,7 @@ public class Context
 
 		systems.Add(GameSystem.instance);
 		systems.Add(InputSystem.instance);
-		systems.Add(RibbonSystem.instance);
+		//systems.Add(RibbonSystem.instance);
 		systems.Add(MenuSystem.instance);
 
 		foreach (ISystem system in systems) {
@@ -35,7 +35,7 @@ public class Context
 		InputSystem.instance.pauseGame += GameSystem.instance.PauseGame;
 		InputSystem.instance.pauseGame += MenuSystem.instance.ShowPausedMenu;
 		GameSystem.instance.endGame += MenuSystem.instance.ShowGameOverMenu;
-		GameSystem.instance.startGame += RibbonSystem.instance.Reset;
+		//GameSystem.instance.startGame += RibbonSystem.instance.Reset;
 
 		foreach (ISystem system in systems) {
 			system.Run();

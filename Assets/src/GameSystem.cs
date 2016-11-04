@@ -9,7 +9,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	const float MIN_DISTANCE = 200;
 	GameObject objective;
 	GameObject nib;
+	GameObject nibArt;
 	Vector3 nibStartPosition;
+	float nibPeek;
 	Vector3 nibStartAngles;
 	Text tScore;
 	Text tClock;
@@ -31,6 +33,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 		player = GameObject.FindWithTag("Player");
 		nib = player.transform.Find("MainCamera/Nib").gameObject;
+		nibArt = nib.transform.Find("NibArt").gameObject;
 		nibStartPosition = nib.transform.localPosition;
 		nibStartAngles = nib.transform.localEulerAngles;
 		hud = nib.transform.Find("HUD").gameObject;
@@ -84,7 +87,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	void UpdateSpotColor() {
 		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
-		nib.GetComponent<Renderer>().material.color = color;
+		nibArt.GetComponent<Renderer>().material.color = color;
 	}
 
 	void ResetTime() {
@@ -138,15 +141,20 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		ResetTime();
 		tScore.text = state.score.ToString("000");
 		SetCheckpoint();
+		nibPeek = 1;
 
 		UpdateState();
-		startGame();
+		if (startGame != null) {
+			startGame();
+		}
 	}
 
 	void EndGame() {
 		state.SetStarted(false);
 		UpdateState();
-		endGame();
+		if (endGame != null) {
+			endGame();
+		}
 	}
 
 	public void AbortGame() {
@@ -183,14 +191,23 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	}
 
 	void UpdateNib() {
-		Vector3 position = nibStartPosition;
-		time += Time.deltaTime * state.speed;
-		position.y += Mathf.Sin(time * 0.1f) * 2 * state.speed / 100;
-		nib.transform.localPosition = position;
 
-		Vector3 angles = nibStartAngles;
-		angles.x -= Mathf.Cos(time * 0.1f) * 2 * state.speed / 100;
-		nib.transform.localEulerAngles = angles;
+		time += Time.deltaTime * state.speed;
+
+		Vector3 nibPosition = nibStartPosition;
+		nibPosition.y += Mathf.Sin(time * 0.1f) * 2 * state.speed / 50;
+		nibPeek *= 0.95f;
+		nibPosition.z += nibPeek * -50;
+		nib.transform.localPosition = nibPosition;
+
+		Vector3 angles = new Vector3();
+		angles.x -= Mathf.Cos(time * 0.1f) * 2 * state.speed / 50;
+
+		angles.x += state.eulerAngles.x * 0.07f;
+		angles.y += state.eulerAngles.y * 0.05f;
+		angles.z += state.eulerAngles.z * 0.2f - state.eulerAngles.y * 0.08f;
+
+		nib.transform.localEulerAngles = nibStartAngles + angles;
 	}
 
 	void TestColorSpace() {

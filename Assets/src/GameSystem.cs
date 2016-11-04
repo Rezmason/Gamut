@@ -41,7 +41,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
 		tHelp = hud.transform.Find("HelpText").gameObject.GetComponent<Text>();
 
-		tHelp.text = "HELLO";
+		tHelp.text = "";
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();

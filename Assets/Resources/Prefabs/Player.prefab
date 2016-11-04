@@ -40,7 +40,6 @@ GameObject:
   - 92: {fileID: 92000010842982360}
   - 124: {fileID: 124000013416273148}
   - 81: {fileID: 81000013011220418}
-  - 114: {fileID: 114000012490031234}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -205,7 +204,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013084175712}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -50, z: 113.01}
+  m_LocalPosition: {x: 0, y: -50, z: 105.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children:
@@ -286,7 +285,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 10000
-  field of view: 120
+  field of view: 100
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -455,20 +454,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 23.7
---- !u!114 &114000012490031234
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000010876982118}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 478a2083ad114a07d000fbfb8d76c639, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shader: {fileID: 0}
-  blurAmount: 0.92
-  extraBlur: 0
 --- !u!114 &114000012558206806
 MonoBehaviour:
   m_ObjectHideFlags: 1

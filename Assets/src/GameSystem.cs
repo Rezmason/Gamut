@@ -6,7 +6,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 
 	public event SimpleDelegate endGame;
 	public event SimpleDelegate startGame;
-	const float MIN_DISTANCE = 200;
+	const float MIN_DISTANCE = 250;
 	GameObject objective;
 	GameObject nib;
 	GameObject nibArt;
@@ -15,7 +15,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	Vector3 nibStartAngles;
 	Text tScore;
 	Text tClock;
-	Text tHelp;
+	Text tPoem;
 	GameObject player;
 	GameObject hud;
 	GameObject scoreBurst;
@@ -23,6 +23,38 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 	ParticleSystem scoreParticles;
 	float timeRemaining;
 	float time;
+	bool textIsInverted;
+	string[] poem = new string[]{
+		"like a frenzied moth\ncircling a flame,",
+		"i plunge headlong\nthrough this\npeculiar void",
+		"in wild pursuit\nof a certain hue\nand shade,",
+		"scattered across an\nomnipresent night.",
+
+		"the rings i seek are\nelegantly rayed;",
+		"i soak in their warm\nbrilliance, despite",
+		"the cold abyss\nencompassing\nthis dream.",
+		"among them i am\nmomentarily joyed",
+
+		"...but when i\nput it squarely\nin my sights,",
+		"each wreath\ndisintegrates\nquick as it came.",
+		"the consequences of\nwhat i destroyed",
+		"leave me alienated\nand afraid.",
+
+		"and what of the\nlooming darkness\ni avoid?",
+		"in its vague boundary\ni formerly played,",
+		"when it appeared as\ncolorful and bright",
+		"in a previous version\nof this game,",
+
+		"before an influence\ni dare not name",
+		"convinced its architect— who\nfirst toyed",
+		"with themes of chroma, fluidity\nand flight",
+		"—that those\nnaive intentions\nwere mislaid.",
+
+		"so,\nin my cosmos\nabruptly disarrayed,",
+		"this habitat\nof luminance\nnow devoid,",
+		"i flit frantically\nto each\ndimming light.",
+		"player, do you ever\nfeel the same?"
+	};
 
 	GameState state;
 
@@ -39,9 +71,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		hud = nib.transform.Find("HUD").gameObject;
 		tScore = hud.transform.Find("Score").gameObject.GetComponent<Text>();
 		tClock = hud.transform.Find("Clock").gameObject.GetComponent<Text>();
-		tHelp = hud.transform.Find("HelpText").gameObject.GetComponent<Text>();
+		tPoem = hud.transform.Find("PoemText").gameObject.GetComponent<Text>();
 
-		tHelp.text = "";
+		tPoem.text = "";
 
 		objective = GameObject.Instantiate(Resources.Load("Prefabs/Objective") as GameObject);
 		objectiveBehavior = objective.AddComponent<ObjectiveBehavior>();
@@ -84,10 +116,31 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		state.activeColorSpace.active = true;
 	}
 
+	void UpdateMothText() {
+		textIsInverted = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position).grayscale < 0.3f;
+	}
+
 	void UpdateSpotColor() {
 		Color color = state.activeColorSpace.ColorFromWorldPosition(objective.transform.position);
 		objective.GetComponent<MeshRenderer>().material.color = color;
 		nibArt.GetComponent<Renderer>().material.color = color;
+
+		Color textColor = textIsInverted ? color / color.maxColorComponent : color * 0.2f;
+		textColor.a = 1f;
+		foreach (Text text in hud.transform.GetComponentsInChildren<Text>()) {
+			text.color = textColor;
+		}
+	}
+
+	void UpdateHelpText() {
+		string poemText = null;
+		if (state.score >= poem.Length) {
+			poemText = "";
+		} else {
+			poemText = poem[state.score];
+		}
+
+		tPoem.text = poemText;
 	}
 
 	void ResetTime() {
@@ -107,7 +160,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		easyPosition += player.transform.right * 80 * Mathf.Cos(easyAngle);
 		easyPosition += player.transform.up    * 80 * Mathf.Sin(easyAngle);
 
-		int triesLeft = 20;
+		int triesLeft = 40;
 		while (Vector3.Distance(nextPosition, position) < MIN_DISTANCE && triesLeft != 0) {
 			nextPosition = Vector3.Lerp(easyPosition, state.activeColorSpace.GetRandomObjectivePosition(), interp);
 			triesLeft--;
@@ -116,7 +169,9 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		objective.transform.position = nextPosition;
 		objective.GetComponent<FaceCameraBehavior>().baseScale = 10 + 100 / (state.score + 1);
 		UpdateParticleSize();
+		UpdateMothText();
 		UpdateSpotColor();
+		UpdateHelpText();
 	}
 
 	void RespondToCollision() {
@@ -134,7 +189,7 @@ public class GameSystem : Thingleton<GameSystem>, ISystem {
 		state.SetStarted(true);
 		state.SetPaused(false);
 
-		player.transform.position = Vector3.back * MIN_DISTANCE;
+		player.transform.position = Vector3.forward * MIN_DISTANCE * 3;
 		player.transform.LookAt(Vector3.zero);
 		state.activeColorSpace.Reset();
 		state.SetScore(0);
